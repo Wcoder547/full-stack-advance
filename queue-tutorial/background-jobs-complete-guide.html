@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Background Jobs — Complete Guide Junior to Senior</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#04060c;--bg2:#060810;--bg3:#080b14;--panel:#0b1020;--panel2:#0f1528;
+  --rim:#182040;--rim2:#202850;
+  --orange:#f97316;--orange2:#fb923c;--orange3:#fed7aa;
+  --blue:#3b82f6;--blue2:#60a5fa;
+  --green:#10b981;--green2:#34d399;
+  --red:#ef4444;--red2:#f87171;
+  --violet:#8b5cf6;--violet2:#a78bfa;
+  --teal:#06b6d4;--teal2:#22d3ee;
+  --amber:#f59e0b;--amber2:#fbbf24;
+  --pink:#ec4899;--pink2:#f472b6;
+  --text:#cdd8f0;--mid:#4e6090;--muted:#222e50;--soft:#7888b0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.8;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--violet);border-radius:2px;}
+
+.sidebar{position:fixed;left:0;top:0;width:252px;height:100vh;background:var(--bg2);border-right:1px solid var(--rim);overflow-y:auto;z-index:100;}
+.sidebar::-webkit-scrollbar{width:2px;}
+.sb-brand{padding:18px 16px 14px;border-bottom:1px solid var(--rim);}
+.sb-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:4px;color:var(--violet2);text-transform:uppercase;margin-bottom:5px;}
+.sb-brand h2{font-family:'DM Serif Display',serif;font-size:19px;color:#fff;line-height:1.15;}
+.sb-sec{padding:10px 8px 4px;}
+.sb-sec-lbl{font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:0 6px 5px;}
+.sb-a{display:block;padding:4px 8px;border-radius:3px;color:var(--muted);text-decoration:none;font-size:10.5px;font-family:'IBM Plex Mono',monospace;transition:all .15s;line-height:1.5;}
+.sb-a:hover{color:var(--text);background:var(--panel);}
+.sb-a.active{color:var(--violet2);background:rgba(139,92,246,.07);border-left:2px solid var(--violet);border-radius:0 3px 3px 0;}
+
+.main{margin-left:252px;}
+
+.hero{min-height:540px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:70px 68px 56px;border-bottom:1px solid var(--rim);}
+.h-bg{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 50% at 75% 20%,rgba(139,92,246,.08) 0%,transparent 65%),
+             radial-gradient(ellipse 35% 35% at 20% 80%,rgba(16,185,129,.04) 0%,transparent 60%),
+             radial-gradient(ellipse 40% 40% at 50% 50%,rgba(249,115,22,.03) 0%,transparent 60%);}
+.h-grid{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(139,92,246,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,.025) 1px,transparent 1px);
+  background-size:64px 64px;}
+.h-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:5px;color:var(--violet2);text-transform:uppercase;margin-bottom:12px;position:relative;}
+.hero h1{font-family:'DM Serif Display',serif;font-size:86px;font-weight:400;line-height:.82;color:#fff;position:relative;max-width:900px;}
+.hero h1 .o{color:var(--orange2);}.hero h1 .b{color:var(--blue2);}.hero h1 .g{color:var(--green2);}.hero h1 .v{color:var(--violet2);}
+.hero h1 em{font-style:italic;}
+.h-sub{font-size:15px;font-weight:300;color:var(--soft);margin-top:18px;max-width:660px;position:relative;line-height:1.7;}
+.h-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px;position:relative;}
+.chip{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:20px;padding:3px 13px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--mid);}
+
+.content{padding:0 68px 100px;}
+.section{padding:68px 0 0;}
+
+.sec-meta{margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.sec-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:3px;padding:3px 10px;border-radius:2px;font-weight:500;text-transform:uppercase;}
+.sb-o{background:var(--orange);color:#fff;}.sb-b{background:var(--blue);color:#fff;}.sb-g{background:var(--green);color:#fff;}
+.sb-v{background:var(--violet);color:#fff;}.sb-r{background:var(--red);color:#fff;}.sb-t{background:var(--teal);color:#000;}
+.sb-a2{background:var(--amber);color:#000;}.sb-p{background:var(--pink);color:#fff;}
+.lv{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;font-weight:500;padding:3px 10px;border-radius:3px;text-transform:uppercase;}
+.lv-j{background:rgba(59,130,246,.1);color:var(--blue2);border:1px solid rgba(59,130,246,.25);}
+.lv-m{background:rgba(16,185,129,.1);color:var(--green2);border:1px solid rgba(16,185,129,.25);}
+.lv-s{background:rgba(249,115,22,.1);color:var(--orange2);border:1px solid rgba(249,115,22,.25);}
+
+.sec-title{font-family:'DM Serif Display',serif;font-size:40px;font-weight:400;color:#fff;line-height:.92;margin-bottom:20px;}
+.sec-title .o{color:var(--orange2);}.sec-title .b{color:var(--blue2);}.sec-title .g{color:var(--green2);}
+.sec-title .r{color:var(--red2);}.sec-title .v{color:var(--violet2);}.sec-title .t{color:var(--teal2);}
+.sec-title .a{color:var(--amber2);}.sec-title .p{color:var(--pink2);}.sec-title em{font-style:italic;}
+
+.prose{font-size:14px;line-height:1.9;color:var(--soft);max-width:860px;}
+.prose p{margin-bottom:14px;}
+.prose strong{color:var(--text);font-weight:600;}
+.prose em{color:var(--violet2);font-style:italic;}
+.prose code{font-family:'IBM Plex Mono',monospace;background:var(--panel2);border:1px solid var(--rim);padding:1px 7px;border-radius:3px;font-size:12px;color:var(--violet2);}
+
+.callout{padding:16px 22px;margin:18px 0;max-width:860px;border-radius:0 10px 10px 0;}
+.callout-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:3px;font-weight:600;text-transform:uppercase;margin-bottom:6px;}
+.callout-txt{font-size:13.5px;line-height:1.85;}
+.co-o{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.15);border-left:3px solid var(--orange);}
+.co-o .callout-lbl{color:var(--orange2);}.co-o .callout-txt{color:rgba(255,175,100,.85);}
+.co-b{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-left:3px solid var(--blue);}
+.co-b .callout-lbl{color:var(--blue2);}.co-b .callout-txt{color:rgba(150,185,255,.85);}
+.co-g{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-left:3px solid var(--green);}
+.co-g .callout-lbl{color:var(--green2);}.co-g .callout-txt{color:rgba(100,220,170,.85);}
+.co-r{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);border-left:3px solid var(--red);}
+.co-r .callout-lbl{color:var(--red2);}.co-r .callout-txt{color:rgba(255,140,140,.85);}
+.co-v{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-left:3px solid var(--violet);}
+.co-v .callout-lbl{color:var(--violet2);}.co-v .callout-txt{color:rgba(180,155,255,.85);}
+.co-a{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-left:3px solid var(--amber);}
+.co-a .callout-lbl{color:var(--amber2);}.co-a .callout-txt{color:rgba(255,205,80,.85);}
+
+.analogy{background:var(--panel2);border:1px solid var(--rim2);border-left:4px solid var(--violet);border-radius:0 12px 12px 0;padding:20px 26px;margin:20px 0;max-width:860px;}
+.analogy-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--violet2);font-weight:600;text-transform:uppercase;margin-bottom:8px;}
+.analogy-body{font-family:'DM Serif Display',serif;font-size:15px;font-style:italic;color:var(--text);line-height:1.65;}
+
+.code{background:#020408;border:1px solid var(--rim);border-radius:12px;overflow:hidden;margin:18px 0;max-width:900px;}
+.code-bar{background:var(--panel2);border-bottom:1px solid var(--rim);padding:10px 18px;display:flex;justify-content:space-between;align-items:center;}
+.code-title{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:3px;color:var(--violet2);text-transform:uppercase;}
+.dots{display:flex;gap:5px;}.dots span{width:11px;height:11px;border-radius:50%;}
+.dots span:nth-child(1){background:#ff5f56;}.dots span:nth-child(2){background:#ffbd2e;}.dots span:nth-child(3){background:#27c93f;}
+.code-pre{padding:22px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:2;color:#1e2b50;overflow-x:auto;}
+.kw{color:#a78bfa;}.str{color:#6ee7b7;}.cm{color:#1a2540;font-style:italic;}.fn{color:#60a5fa;}
+.num{color:#fbbf24;}.oo{color:#fb923c;}.gg{color:#34d399;}.rr{color:#f87171;}
+.vv{color:#c084fc;}.tt{color:#22d3ee;}.ww{color:#fff;font-weight:500;}
+.ok{color:#27c93f;font-weight:600;}.bad{color:#ff5f56;}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin:22px 0;max-width:900px;}
+.card{background:var(--panel);border:1px solid var(--rim);border-radius:12px;padding:22px;transition:border-color .2s,transform .2s;}
+.card:hover{transform:translateY(-2px);border-color:var(--rim2);}
+.card-ico{font-size:26px;margin-bottom:10px;}
+.card-title{font-family:'DM Serif Display',serif;font-size:17px;color:#fff;margin-bottom:8px;}
+.card-body{font-size:13px;color:var(--mid);line-height:1.75;}
+
+.tbl{overflow-x:auto;margin:18px 0;max-width:920px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--panel2);border:1px solid var(--rim);padding:10px 14px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:2px;color:var(--violet2);text-transform:uppercase;}
+td{border:1px solid var(--rim);padding:9px 14px;color:var(--mid);vertical-align:top;}
+tr:hover td{background:rgba(255,255,255,.01);}
+td strong{color:var(--text);}
+
+.cmp2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0;max-width:880px;}
+.cmp3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:20px 0;max-width:900px;}
+.cbox{background:var(--panel);border:1px solid var(--rim);border-radius:10px;padding:20px;}
+.cbox-title{font-family:'DM Serif Display',serif;font-size:16px;color:#fff;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--rim);}
+
+.flow{background:var(--panel);border:1px solid var(--rim);border-radius:12px;padding:22px 24px;margin:20px 0;max-width:880px;}
+.flow-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:20px;}
+.flow-step{display:flex;align-items:flex-start;gap:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03);}
+.flow-step:last-child{border-bottom:none;}
+.flow-n{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;flex-shrink:0;margin-top:2px;}
+.flow-title{font-family:'DM Serif Display',serif;font-size:15px;color:#fff;margin-bottom:3px;}
+.flow-desc{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--mid);line-height:1.6;}
+
+.timeline{max-width:860px;margin:20px 0;}
+.tl-item{display:flex;gap:18px;padding-bottom:28px;position:relative;}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:14px;top:32px;bottom:0;width:1px;background:var(--rim2);}
+.tl-dot{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:2px;}
+.tl-body{}
+.tl-title{font-family:'DM Serif Display',serif;font-size:16px;color:#fff;margin-bottom:4px;}
+.tl-desc{font-size:13px;color:var(--mid);line-height:1.75;}
+.tl-desc strong{color:var(--soft);}
+
+.prod-cl{background:var(--panel2);border:1px solid var(--rim2);border-radius:12px;overflow:hidden;margin:20px 0;max-width:900px;}
+.prod-cl-hdr{background:var(--panel);border-bottom:1px solid var(--rim);padding:13px 22px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:3px;color:var(--violet2);text-transform:uppercase;}
+.prod-cl-item{display:flex;align-items:flex-start;gap:14px;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s;}
+.prod-cl-item:hover{background:rgba(139,92,246,.02);}
+.pcl-ico{color:var(--violet2);font-size:14px;flex-shrink:0;margin-top:1px;font-family:'IBM Plex Mono',monospace;}
+.pcl-txt{flex:1;font-size:13px;color:var(--soft);line-height:1.6;}
+.pcl-txt strong{color:var(--text);}
+
+/* Architecture diagram styles */
+.arch-box{background:var(--panel2);border:1px solid var(--rim2);border-radius:14px;padding:28px;max-width:900px;margin:20px 0;}
+.arch-title{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:22px;}
+.arch-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.arch-node{background:var(--panel);border:1px solid var(--rim2);border-radius:8px;padding:10px 16px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);white-space:nowrap;}
+.arch-arrow{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:13px;}
+.arch-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--mid);letter-spacing:2px;margin-top:2px;text-align:center;}
+
+/* chain task visual */
+.chain{display:flex;flex-direction:column;gap:0;max-width:860px;margin:20px 0;}
+.chain-row{display:flex;align-items:center;gap:0;}
+.chain-node{background:var(--panel2);border:1px solid var(--rim2);border-radius:8px;padding:12px 18px;font-size:13px;min-width:180px;}
+.chain-node-title{font-family:'DM Serif Display',serif;font-size:14px;color:#fff;margin-bottom:3px;}
+.chain-node-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid);}
+.chain-arrow-h{padding:0 8px;color:var(--muted);font-size:18px;}
+.chain-arrow-v{width:1px;background:var(--rim2);height:20px;margin:0 24px;}
+.chain-parallel{display:flex;gap:12px;}
+
+/* design framework */
+.design-step{background:var(--panel);border:1px solid var(--rim);border-radius:12px;padding:20px 24px;margin-bottom:12px;max-width:900px;display:flex;gap:18px;}
+.ds-num{font-family:'DM Serif Display',serif;font-size:32px;color:var(--violet2);opacity:.4;line-height:1;flex-shrink:0;width:36px;}
+.ds-body{}
+.ds-title{font-family:'DM Serif Display',serif;font-size:17px;color:#fff;margin-bottom:6px;}
+.ds-desc{font-size:13px;color:var(--mid);line-height:1.75;}
+.ds-desc strong{color:var(--soft);}
+
+hr.d{border:none;border-top:1px solid var(--rim);margin:64px 0 0;max-width:880px;}
+
+/* exponential backoff visual */
+.backoff-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:860px;margin:18px 0;}
+.bf{background:var(--panel2);border:1px solid var(--rim);border-radius:8px;padding:14px 10px;text-align:center;}
+.bf-attempt{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--mid);margin-bottom:6px;}
+.bf-time{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;margin-bottom:4px;}
+.bf-unit{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--mid);}
+.bf-fail{border-color:var(--red)!important;}
+.bf-fail .bf-time{color:var(--red2);}
+.bf-ok{border-color:var(--green)!important;}
+.bf-ok .bf-time{color:var(--green2);}
+
+@media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;}.hero,.content{padding-left:24px;padding-right:24px;}.hero h1{font-size:52px;}.cmp2,.cmp3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-tag">// theory → production design · junior → senior</div>
+    <h2>Background<br><em>Jobs</em></h2>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Foundations</div>
+    <a class="sb-a active" href="#what-is">What is a Background Job?</a>
+    <a class="sb-a" href="#why-need">Why Do We Need Them?</a>
+    <a class="sb-a" href="#sync-vs-async">Sync vs Async Processing</a>
+    <a class="sb-a" href="#when-to-offload">When to Offload to Background</a>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Architecture</div>
+    <a class="sb-a" href="#producer-consumer">Producer → Queue → Consumer</a>
+    <a class="sb-a" href="#broker">The Broker (Queue)</a>
+    <a class="sb-a" href="#enqueue-dequeue">Enqueue & Dequeue</a>
+    <a class="sb-a" href="#acknowledgements">Acknowledgements</a>
+    <a class="sb-a" href="#visibility-timeout">Visibility Timeout</a>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Types of Tasks</div>
+    <a class="sb-a" href="#one-off">One-Off Tasks</a>
+    <a class="sb-a" href="#recurring">Recurring / Cron Tasks</a>
+    <a class="sb-a" href="#chain">Chain Tasks</a>
+    <a class="sb-a" href="#batch">Batch Tasks</a>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Reliability</div>
+    <a class="sb-a" href="#retries">Retries & Exponential Backoff</a>
+    <a class="sb-a" href="#idempotency">Idempotency</a>
+    <a class="sb-a" href="#dead-letter">Dead Letter Queues</a>
+    <a class="sb-a" href="#error-handling">Error Handling & Logging</a>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Technology</div>
+    <a class="sb-a" href="#bullmq">BullMQ (Node.js)</a>
+    <a class="sb-a" href="#bullmq-code">BullMQ — Full Implementation</a>
+    <a class="sb-a" href="#brokers">Brokers Compared</a>
+    <a class="sb-a" href="#cron-jobs">Cron Jobs & Scheduling</a>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Real World Use Cases</div>
+    <a class="sb-a" href="#email">Email Sending</a>
+    <a class="sb-a" href="#media">Image / Video Processing</a>
+    <a class="sb-a" href="#reports">Report Generation</a>
+    <a class="sb-a" href="#push">Push Notifications</a>
+    <a class="sb-a" href="#delete-account">Account Deletion (Batch)</a>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Production Design</div>
+    <a class="sb-a" href="#design-framework">The Design Framework</a>
+    <a class="sb-a" href="#queue-design">Queue Architecture</a>
+    <a class="sb-a" href="#scaling-workers">Scaling Workers</a>
+    <a class="sb-a" href="#monitoring">Monitoring & Alerting</a>
+    <a class="sb-a" href="#best-practices">Best Practices</a>
+    <a class="sb-a" href="#checklist">Production Checklist</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="h-bg"></div><div class="h-grid"></div>
+  <div class="h-tag">// offload · retry · scale · survive external failures</div>
+  <h1><em>Background</em><br><span class="v">Jobs</span></h1>
+  <p class="h-sub">From the one-sentence definition of what a background job is, through producer-consumer architecture, acknowledgements, retries with exponential backoff, idempotency, and chain tasks — all the way to designing a production-grade, scalable background job system from scratch when a client gives you a project.</p>
+  <div class="h-chips">
+    <span class="chip">Producer / Consumer</span><span class="chip">Task Queue</span><span class="chip">BullMQ</span>
+    <span class="chip">Exponential Backoff</span><span class="chip">Idempotency</span><span class="chip">Cron Jobs</span>
+    <span class="chip">Dead Letter Queue</span><span class="chip">Visibility Timeout</span><span class="chip">Chain Tasks</span>
+    <span class="chip">Batch Processing</span><span class="chip">Worker Scaling</span><span class="chip">Monitoring</span>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ═══ 01 WHAT IS ═══ -->
+<section id="what-is" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-v">01</span><span class="lv lv-j">Junior</span></div>
+  <h2 class="sec-title">WHAT IS A <span class="v">BACKGROUND JOB?</span></h2>
+  <div class="prose">
+    <p><strong>One sentence:</strong> A background job is any piece of code that runs outside the request-response life cycle.</p>
+    <p>When a client makes an API call to your server, there is a life cycle: request comes in → server processes it → server responds. Everything inside that cycle is <em>synchronous</em> — the client waits for the response. A background job lives <strong>outside</strong> that cycle entirely. It is triggered, but it does not make the client wait. It runs separately, in its own process, on its own timeline.</p>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-lbl">🍕 The Restaurant Analogy</div>
+    <div class="analogy-body">A customer walks in, orders food, and the waiter takes the order — in 10 seconds the waiter confirms: "Order received!" The customer has their drink and sits comfortably. Meanwhile, in the kitchen, the chef spends 20 minutes cooking. The customer didn't wait 20 minutes at the counter. The kitchen is the background job — working hard in a separate process while the customer experience remains instant and smooth.</div>
+  </div>
+
+  <div class="cmp2">
+    <div class="cbox" style="border-top:3px solid var(--red)">
+      <div class="cbox-title" style="color:var(--red2)">❌ Synchronous (Blocking)</div>
+      <div style="font-size:13px;color:var(--mid);line-height:1.9">
+        <strong style="color:var(--text)">User signs up → API waits → sends email → responds.</strong><br><br>
+        If the email provider is slow (3 seconds) or down, the whole signup API hangs. If it times out, the user sees an error. The signup might even fail. Bad experience.<br><br>
+        The user's API response depends on an <strong style="color:var(--text)">external service you don't control</strong>.
+      </div>
+    </div>
+    <div class="cbox" style="border-top:3px solid var(--green)">
+      <div class="cbox-title" style="color:var(--green2)">✅ Asynchronous (Background Job)</div>
+      <div style="font-size:13px;color:var(--mid);line-height:1.9">
+        <strong style="color:var(--text)">User signs up → API pushes task to queue → responds instantly.</strong><br><br>
+        Worker picks up email task and sends it independently. If the provider is down, the worker retries automatically with exponential backoff. User experience is never affected.<br><br>
+        The user's API response depends <strong style="color:var(--text)">only on your queue</strong>, which you control.
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 02 WHY NEED ═══ -->
+<section id="why-need" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-o">02</span><span class="lv lv-j">Junior</span></div>
+  <h2 class="sec-title">WHY DO WE <span class="o">NEED THEM?</span></h2>
+  <div class="prose">
+    <p>Two root problems that background jobs solve:</p>
+  </div>
+  <div class="cmp2">
+    <div class="cbox" style="border-left:3px solid var(--orange)">
+      <div class="card-ico">⏱️</div>
+      <div class="cbox-title">Time-Consuming Work</div>
+      <div style="font-size:13px;color:var(--mid);line-height:1.85">
+        Some operations take seconds, minutes, or hours. Encoding a video, generating a PDF report, processing a batch of 10,000 records. You <strong style="color:var(--text)">cannot block an HTTP request</strong> for that long — browsers timeout after 30 seconds, load balancers timeout, users give up. These tasks must live outside the request cycle.
+      </div>
+    </div>
+    <div class="cbox" style="border-left:3px solid var(--violet)">
+      <div class="card-ico">🔗</div>
+      <div class="cbox-title">External Service Dependencies</div>
+      <div style="font-size:13px;color:var(--mid);line-height:1.85">
+        Any time your server calls another server (email provider, SMS provider, push notification service, payment gateway), you introduce <strong style="color:var(--text)">failure risk you cannot control</strong>. External services go down. They have rate limits. They are slow sometimes. Offloading these calls to background jobs with retry logic protects your users from those failures.
+      </div>
+    </div>
+  </div>
+  <div class="callout co-v">
+    <div class="callout-lbl">💡 The Two Rules of Thumb</div>
+    <div class="callout-txt">
+      <strong>Rule 1:</strong> If a task takes more than ~200ms OR depends on an external service → consider making it a background job.<br>
+      <strong>Rule 2:</strong> If the result of a task does not need to be in the HTTP response → it should be a background job.
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 03 SYNC VS ASYNC ═══ -->
+<section id="sync-vs-async" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-b">03</span><span class="lv lv-j">Junior</span></div>
+  <h2 class="sec-title">SYNC VS <span class="b">ASYNC PROCESSING</span> — The Email Example</h2>
+  <div class="prose">
+    <p>Let's walk through exactly what goes wrong with synchronous processing, and exactly how background jobs fix it, using the signup verification email as the example.</p>
+  </div>
+
+  <div class="flow" style="border-top:3px solid var(--red)">
+    <div class="flow-lbl">// ❌ SYNCHRONOUS — everything in one request</div>
+    <div class="flow-step">
+      <div class="flow-n" style="background:rgba(239,68,68,.15);color:var(--red2);border:1px solid rgba(239,68,68,.3)">1</div>
+      <div>
+        <div class="flow-title">User submits signup form</div>
+        <div class="flow-desc">Frontend makes POST /auth/signup. User is waiting. Clock starts ticking.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-n" style="background:rgba(239,68,68,.15);color:var(--red2);border:1px solid rgba(239,68,68,.3)">2</div>
+      <div>
+        <div class="flow-title">Server validates, hashes password, saves to DB</div>
+        <div class="flow-desc">Fast. Takes ~50ms. User still waiting.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-n" style="background:rgba(239,68,68,.15);color:var(--red2);border:1px solid rgba(239,68,68,.3)">3</div>
+      <div>
+        <div class="flow-title">Server calls email provider API (Resend / Mailgun)</div>
+        <div class="flow-desc">Making an HTTP call to an external server. Takes 200ms–3000ms normally. User still waiting. If the provider is DOWN — this call hangs until timeout (30s+). Signup appears frozen. User gives up.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-n" style="background:rgba(239,68,68,.15);color:var(--red2);border:1px solid rgba(239,68,68,.3)">4</div>
+      <div>
+        <div class="flow-title">Email provider returns error → your signup API fails</div>
+        <div class="flow-desc">You either return 500 (user thinks signup failed — they try again, creating duplicate) OR you swallow the error and tell user email was sent — it wasn't. Both are terrible outcomes.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow" style="border-top:3px solid var(--green)">
+    <div class="flow-lbl">// ✅ ASYNCHRONOUS — background job pattern</div>
+    <div class="flow-step">
+      <div class="flow-n" style="background:rgba(16,185,129,.15);color:var(--green2);border:1px solid rgba(16,185,129,.3)">1</div>
+      <div>
+        <div class="flow-title">User submits signup form</div>
+        <div class="flow-desc">Frontend makes POST /auth/signup. User is waiting.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-n" style="background:rgba(16,185,129,.15);color:var(--green2);border:1px solid rgba(16,185,129,.3)">2</div>
+      <div>
+        <div class="flow-title">Server validates, saves to DB, generates verification code</div>
+        <div class="flow-desc">Same as before. ~50ms.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-n" style="background:rgba(16,185,129,.15);color:var(--green2);border:1px solid rgba(16,185,129,.3)">3</div>
+      <div>
+        <div class="flow-title">Server serializes task data and PUSHES to queue</div>
+        <div class="flow-desc">Packages { userId, userEmail, verificationCode, template } as JSON and pushes to the email queue. This takes ~2ms. Queue is YOUR infrastructure — always fast.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-n" style="background:rgba(16,185,129,.15);color:var(--green2);border:1px solid rgba(16,185,129,.3)">4</div>
+      <div>
+        <div class="flow-title">Server returns 201 — INSTANTLY</div>
+        <div class="flow-desc">Total API response time: ~55ms. User sees "Check your email for verification." User experience is perfect regardless of what happens next.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-n" style="background:rgba(139,92,246,.15);color:var(--violet2);border:1px solid rgba(139,92,246,.3)">5</div>
+      <div>
+        <div class="flow-title">Worker picks up task, calls email provider</div>
+        <div class="flow-desc">In a SEPARATE PROCESS. Worker dequeues the task, deserializes it, calls Resend/Mailgun API. If it fails → retry with exponential backoff. Email provider comes back up → succeeds automatically. User gets their email. Nobody had to do anything.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 04 WHEN TO OFFLOAD ═══ -->
+<section id="when-to-offload" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-g">04</span><span class="lv lv-j">Junior</span></div>
+  <h2 class="sec-title">WHEN TO <span class="g">OFFLOAD TO BACKGROUND</span></h2>
+  <div class="cards">
+    <div class="card" style="border-left:3px solid var(--violet)">
+      <div class="card-ico">📧</div>
+      <div class="card-title">Sending Emails</div>
+      <div class="card-body">Verification, welcome, password reset, notification emails. Always external provider — always background. Resend, Mailgun, SendGrid all have occasional downtime.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--blue)">
+      <div class="card-ico">🖼️</div>
+      <div class="card-title">Image / Video Processing</div>
+      <div class="card-body">Resizing images to multiple breakpoints (mobile, tablet, desktop). Encoding video to multiple resolutions (480p, 720p, 1080p). These can take seconds to minutes.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--orange)">
+      <div class="card-ico">📄</div>
+      <div class="card-title">Report Generation</div>
+      <div class="card-body">Generating PDF weekly reports, pulling analytics data, constructing HTML email summaries. Can involve complex DB queries across millions of rows.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--green)">
+      <div class="card-ico">🔔</div>
+      <div class="card-title">Push Notifications</div>
+      <div class="card-body">Mobile push via APNs (Apple) or FCM (Google). Your backend calls their external APIs. Must be offloaded — external service call, can fail, needs retry.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--red)">
+      <div class="card-ico">🗑️</div>
+      <div class="card-title">Account Deletion</div>
+      <div class="card-body">Deleting all user data across tables, S3 assets, related records. Can take minutes. Cannot block an API request. Offload and respond immediately.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--amber)">
+      <div class="card-ico">🔄</div>
+      <div class="card-title">DB Cleanup / Maintenance</div>
+      <div class="card-body">Deleting expired sessions, cleaning orphan records, archiving old data. Run on a schedule — nightly or weekly — never blocking user requests.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--teal)">
+      <div class="card-ico">🤖</div>
+      <div class="card-title">AI / ML Processing</div>
+      <div class="card-body">Running inference on uploaded files (image classification, transcription, sentiment analysis). Often slow, GPU-bound — always a background job.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--pink)">
+      <div class="card-ico">💳</div>
+      <div class="card-title">Webhooks / External Events</div>
+      <div class="card-body">Processing incoming webhooks from Stripe, GitHub, Twilio. Acknowledge immediately (200 OK), process in background. External systems have timeout expectations (~30s).</div>
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 05 PRODUCER CONSUMER ═══ -->
+<section id="producer-consumer" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-v">05</span><span class="lv lv-j">Junior</span></div>
+  <h2 class="sec-title">PRODUCER → QUEUE → <span class="v">CONSUMER</span></h2>
+  <div class="prose">
+    <p>The architecture behind every background job system is the Producer-Consumer pattern. Three components, three clear responsibilities.</p>
+  </div>
+
+  <div class="arch-box">
+    <div class="arch-title">// the three-component architecture</div>
+    <div class="arch-row">
+      <div style="text-align:center">
+        <div class="arch-node" style="border-color:rgba(139,92,246,.4);color:var(--violet2)">🏭 PRODUCER<br><span style="font-size:9px;color:var(--mid)">Your API / App Code</span></div>
+        <div class="arch-label">Creates & enqueues tasks</div>
+      </div>
+      <div class="arch-arrow">──────►</div>
+      <div style="text-align:center">
+        <div class="arch-node" style="border-color:rgba(245,158,11,.4);color:var(--amber2)">📦 BROKER / QUEUE<br><span style="font-size:9px;color:var(--mid)">Redis / RabbitMQ / SQS</span></div>
+        <div class="arch-label">Stores tasks until consumed</div>
+      </div>
+      <div class="arch-arrow">──────►</div>
+      <div style="text-align:center">
+        <div class="arch-node" style="border-color:rgba(16,185,129,.4);color:var(--green2)">⚙️ CONSUMER / WORKER<br><span style="font-size:9px;color:var(--mid)">Separate Process</span></div>
+        <div class="arch-label">Dequeues & executes tasks</div>
+      </div>
+    </div>
+    <div style="margin-top:18px;border-top:1px solid var(--rim);padding-top:16px;">
+      <div class="arch-row">
+        <div class="arch-node" style="font-size:10px;min-width:auto">Worker sends ACK ✓</div>
+        <div class="arch-arrow">──────►</div>
+        <div class="arch-node" style="font-size:10px;min-width:auto">Queue removes task</div>
+        <div style="width:40px"></div>
+        <div class="arch-node" style="font-size:10px;min-width:auto;border-color:rgba(239,68,68,.3)">Worker fails ✗</div>
+        <div class="arch-arrow">──────►</div>
+        <div class="arch-node" style="font-size:10px;min-width:auto">Queue retries task</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cmp3">
+    <div class="cbox" style="border-top:3px solid var(--violet)">
+      <div class="cbox-title" style="color:var(--violet2)">🏭 Producer</div>
+      <div style="font-size:13px;color:var(--mid);line-height:1.85">
+        <strong style="color:var(--text)">What it is:</strong> Your main application code — the Express/Fastify/NestJS server.<br><br>
+        <strong style="color:var(--text)">What it does:</strong> Creates a task object with all the data the worker will need, serializes it to JSON, and pushes it onto a named queue.<br><br>
+        <strong style="color:var(--text)">What it does NOT do:</strong> Execute the task. Once it's enqueued, the producer's job is done.
+      </div>
+    </div>
+    <div class="cbox" style="border-top:3px solid var(--amber)">
+      <div class="cbox-title" style="color:var(--amber2)">📦 Broker (Queue)</div>
+      <div style="font-size:13px;color:var(--mid);line-height:1.85">
+        <strong style="color:var(--text)">What it is:</strong> A message store — Redis, RabbitMQ, Amazon SQS, etc.<br><br>
+        <strong style="color:var(--text)">What it does:</strong> Stores tasks durably until a worker is ready. Tracks task state (waiting, active, completed, failed). Manages retries. Ensures no task is lost.<br><br>
+        <strong style="color:var(--text)">The "to-do list"</strong> for your backend.
+      </div>
+    </div>
+    <div class="cbox" style="border-top:3px solid var(--green)">
+      <div class="cbox-title" style="color:var(--green2)">⚙️ Consumer (Worker)</div>
+      <div style="font-size:13px;color:var(--mid);line-height:1.85">
+        <strong style="color:var(--text)">What it is:</strong> A separate process — runs independently of your main API server.<br><br>
+        <strong style="color:var(--text)">What it does:</strong> Constantly polls the queue. Picks up tasks. Deserializes JSON back to native objects. Runs the handler function. Sends acknowledgement back.<br><br>
+        <strong style="color:var(--text)">Can be scaled</strong> horizontally by adding more worker instances.
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 06 BROKER ═══ -->
+<section id="broker" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-a2">06</span><span class="lv lv-j">Junior</span></div>
+  <h2 class="sec-title">THE BROKER — <span class="a">Queue Technologies</span></h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Technology</th><th>Type</th><th>Best For</th><th>Used With</th><th>Managed Option</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Redis</strong></td><td>In-memory store</td><td>Most use cases. Fast, simple, widely supported. BullMQ uses Redis as its broker.</td><td>BullMQ (Node.js), Celery (Python)</td><td>Upstash Redis, Redis Cloud</td></tr>
+        <tr><td><strong>RabbitMQ</strong></td><td>Message broker</td><td>Complex routing, multiple queues, enterprise setups. More features than Redis pub/sub.</td><td>amqplib (Node.js), Pika (Python)</td><td>CloudAMQP</td></tr>
+        <tr><td><strong>Amazon SQS</strong></td><td>Managed queue</td><td>AWS-native apps, very high scale, multi-region, no infrastructure to manage.</td><td>AWS SDK</td><td>Fully managed by AWS</td></tr>
+        <tr><td><strong>Redis Pub/Sub</strong></td><td>Pub/Sub messaging</td><td>Simple event broadcasting. No persistence — not ideal for tasks that must survive restarts.</td><td>ioredis</td><td>Upstash</td></tr>
+        <tr><td><strong>PostgreSQL (SKIP)</strong></td><td>Relational DB</td><td>Simple scheduled tasks at very low scale. Becomes a problem under load.</td><td>pg-boss</td><td>N/A</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout co-a">
+    <div class="callout-lbl">💡 What to Choose as a Fresher</div>
+    <div class="callout-txt"><strong>Default choice: Redis + BullMQ (Node.js)</strong> or Redis + Celery (Python). This covers 95% of real-world use cases. Redis is already in most backend stacks for caching. BullMQ gives you queues, retries, scheduling, concurrency, and a dashboard — all built in. Only consider RabbitMQ or SQS when you have specific routing complexity or AWS-native requirements at scale.</div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 07 ENQUEUE DEQUEUE ═══ -->
+<section id="enqueue-dequeue" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-b">07</span><span class="lv lv-j">Junior</span></div>
+  <h2 class="sec-title">ENQUEUE <span class="b">&amp; DEQUEUE</span></h2>
+  <div class="prose">
+    <p><strong>Enqueue</strong> = adding a task to the queue (producer's job). <strong>Dequeue</strong> = taking a task out of the queue (consumer's job). These are the two fundamental queue operations — the same concepts you know from data structures.</p>
+  </div>
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">Enqueue & Dequeue — Conceptual Flow</div></div>
+    <div class="code-pre">
+<span class="cm">// ─── ENQUEUE (Producer side) ──────────────────────────────────────</span>
+<span class="cm">// When user signs up, producer creates a task and pushes to queue</span>
+
+<span class="kw">const</span> taskData = {
+  userId:   <span class="str">'user_abc123'</span>,
+  email:    <span class="str">'alice@example.com'</span>,
+  name:     <span class="str">'Alice'</span>,
+  code:     <span class="str">'847392'</span>,          <span class="cm">// verification code</span>
+  template: <span class="str">'email-verification'</span>
+};
+
+<span class="cm">// Serialize to JSON → push to 'email' queue</span>
+<span class="cm">// This takes ~2ms. API responds immediately after this.</span>
+<span class="kw">await</span> emailQueue.<span class="fn">add</span>(<span class="str">'send-verification'</span>, taskData);
+<span class="cm">// ↑ "send-verification" is the JOB NAME (type of task)</span>
+<span class="cm">// taskData is serialized to JSON and stored in Redis</span>
+
+<span class="cm">// ─── DEQUEUE (Consumer side — runs in SEPARATE PROCESS) ───────────</span>
+<span class="cm">// Worker constantly monitors the queue</span>
+<span class="cm">// When a new task arrives, it automatically dequeues it</span>
+
+emailQueue.<span class="fn">process</span>(<span class="str">'send-verification'</span>, <span class="kw">async</span> (job) => {
+  <span class="cm">// job.data is the deserialized task object</span>
+  <span class="kw">const</span> { userId, email, name, code, template } = job.data;
+
+  <span class="cm">// Run the actual work</span>
+  <span class="kw">await</span> <span class="fn">sendEmail</span>({
+    to:      email,
+    from:    <span class="str">'noreply@yourapp.com'</span>,
+    subject: <span class="str">'Verify your account'</span>,
+    html:    <span class="fn">renderTemplate</span>(template, { name, code })
+  });
+
+  <span class="cm">// If we reach here without throwing → worker sends ACK automatically</span>
+  <span class="cm">// Queue marks this task as COMPLETED and removes it</span>
+
+  <span class="cm">// If sendEmail() throws → worker sends NACK automatically</span>
+  <span class="cm">// Queue marks task as FAILED and schedules a retry</span>
+});
+
+<span class="cm">// ─── QUEUE STATE at any moment ────────────────────────────────────</span>
+<span class="cm">// waiting   → tasks queued, waiting for a free worker</span>
+<span class="cm">// active    → task dequeued, worker is processing it right now</span>
+<span class="cm">// completed → task finished successfully, ACK received</span>
+<span class="cm">// failed    → task threw an error, will be retried</span>
+<span class="cm">// delayed   → task scheduled for future, not yet in waiting</span>
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 08 ACK ═══ -->
+<section id="acknowledgements" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-g">08</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">ACKNOWLEDGEMENTS — <span class="g">How the Queue Knows</span></h2>
+  <div class="prose">
+    <p>When a worker finishes a task, it sends an <strong>acknowledgement (ACK)</strong> back to the queue. This tells the queue: "Task completed successfully. Remove it." If the worker does NOT send an ACK — because it crashed, threw an error, or the process was killed — the queue knows something went wrong and can take action.</p>
+  </div>
+  <div class="cmp2">
+    <div class="cbox" style="border-top:3px solid var(--green)">
+      <div class="cbox-title" style="color:var(--green2)">✅ ACK — Success</div>
+      <div style="font-size:13px;color:var(--mid);line-height:1.85">
+        Worker completes the handler function <strong style="color:var(--text)">without throwing an error</strong>. Framework automatically sends ACK to the queue. Queue removes the task from storage. Task appears in "completed" state.
+      </div>
+    </div>
+    <div class="cbox" style="border-top:3px solid var(--red)">
+      <div class="cbox-title" style="color:var(--red2)">❌ NACK — Failure</div>
+      <div style="font-size:13px;color:var(--mid);line-height:1.85">
+        Worker throws an error (or crashes). Framework sends NACK (negative acknowledgement). Queue marks task as "failed" and schedules it for retry according to the backoff configuration.
+      </div>
+    </div>
+  </div>
+  <div class="callout co-g">
+    <div class="callout-lbl">💡 Why Acknowledgements Matter</div>
+    <div class="callout-txt">Without acknowledgements, you'd have no way to know if a task succeeded or failed. A task dequeued by a crashing worker would simply disappear — lost forever. The ACK/NACK system is what makes task queues <strong>reliable</strong>. Every task is guaranteed to be processed at least once (and usually exactly once with idempotency design).</div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 09 VISIBILITY TIMEOUT ═══ -->
+<section id="visibility-timeout" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-v">09</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">VISIBILITY <span class="v">TIMEOUT</span></h2>
+  <div class="prose">
+    <p>The visibility timeout is the maximum time the queue gives a worker to finish processing a task and send an acknowledgement. If the worker doesn't ACK within this window, the queue assumes the worker crashed or hung — and makes the task available to other workers.</p>
+  </div>
+  <div class="analogy">
+    <div class="analogy-lbl">📬 The Delivery Analogy</div>
+    <div class="analogy-body">A post office hands a package to a courier. The courier has 30 minutes to deliver it and confirm. If the courier doesn't confirm in 30 minutes — maybe their vehicle broke down — the post office takes the package back and gives it to a different courier. The package is never lost. That 30-minute window is the visibility timeout.</div>
+  </div>
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">Visibility Timeout — Configuration & Behavior</div></div>
+    <div class="code-pre">
+<span class="cm">// ─── BullMQ: lock duration = visibility timeout ───────────────────</span>
+<span class="kw">const</span> worker = <span class="kw">new</span> <span class="fn">Worker</span>(<span class="str">'email'</span>, <span class="kw">async</span> (job) => {
+  <span class="kw">await</span> <span class="fn">sendEmail</span>(job.data);
+}, {
+  lockDuration: <span class="num">30000</span>,   <span class="cm">// 30 seconds — worker must finish within this window</span>
+                         <span class="cm">// If it doesn't, queue makes task available to other workers</span>
+  stalledInterval: <span class="num">5000</span>, <span class="cm">// Check for stalled workers every 5 seconds</span>
+});
+
+<span class="cm">// ─── Amazon SQS: VisibilityTimeout parameter ──────────────────────</span>
+<span class="kw">const</span> message = <span class="kw">await</span> sqs.<span class="fn">receiveMessage</span>({
+  QueueUrl:            process.env.QUEUE_URL,
+  VisibilityTimeout:   <span class="num">60</span>,  <span class="cm">// 60 seconds — SQS hides message from other consumers</span>
+  MaxNumberOfMessages: <span class="num">1</span>,
+}).<span class="fn">promise</span>();
+
+<span class="cm">// Worker has 60 seconds to process and delete the message</span>
+<span class="cm">// If it doesn't delete within 60s, SQS makes it visible again</span>
+
+<span class="cm">// ─── Choosing the right timeout ───────────────────────────────────</span>
+<span class="cm">// Simple email task:      30 seconds  (usually completes in <5s)</span>
+<span class="cm">// Image processing:       5 minutes   (can take 30-90 seconds)</span>
+<span class="cm">// Video encoding:         30 minutes  (can take minutes)</span>
+<span class="cm">// PDF report generation:  2 minutes   (DB queries + PDF build)</span>
+<span class="cm">// Rule: set to 2-3x the expected max execution time</span>
+
+<span class="cm">// ─── Heartbeat for long-running tasks ────────────────────────────</span>
+<span class="cm">// For tasks that take longer than the timeout, extend the lock periodically</span>
+<span class="kw">const</span> worker = <span class="kw">new</span> <span class="fn">Worker</span>(<span class="str">'video-encode'</span>, <span class="kw">async</span> (job) => {
+  <span class="kw">const</span> heartbeat = <span class="fn">setInterval</span>(() => job.<span class="fn">updateProgress</span>(<span class="num">50</span>), <span class="num">10000</span>);
+  <span class="kw">try</span> {
+    <span class="kw">await</span> <span class="fn">encodeVideo</span>(job.data);
+  } <span class="kw">finally</span> {
+    <span class="fn">clearInterval</span>(heartbeat);
+  }
+}, { lockDuration: <span class="num">300000</span> });  <span class="cm">// 5 minute timeout for video tasks</span>
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 10 TYPES — ONE OFF ═══ -->
+<section id="one-off" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-o">10</span><span class="lv lv-j">Junior</span></div>
+  <h2 class="sec-title">TYPE 1 — <span class="o">One-Off Tasks</span></h2>
+  <div class="prose">
+    <p>A one-off task is triggered by a specific event and runs exactly once. Something happens → create a task. The most common type of background job you'll write day-to-day.</p>
+  </div>
+  <div class="cards">
+    <div class="card" style="border-left:3px solid var(--orange)">
+      <div class="card-ico">📧</div>
+      <div class="card-title">Verification Email</div>
+      <div class="card-body">User registers → enqueue send-verification-email task. One event, one task, one execution.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--blue)">
+      <div class="card-ico">👋</div>
+      <div class="card-title">Welcome Email</div>
+      <div class="card-body">User verifies their account → enqueue send-welcome-email task. Trigger: account verified event.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--green)">
+      <div class="card-ico">🔑</div>
+      <div class="card-title">Password Reset</div>
+      <div class="card-body">User requests reset → enqueue send-password-reset-email task with a short-lived token.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--violet)">
+      <div class="card-ico">💬</div>
+      <div class="card-title">In-App Notification</div>
+      <div class="card-body">User receives a message → enqueue send-notification task. Could be push (FCM/APNs) or in-app.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--teal)">
+      <div class="card-ico">💳</div>
+      <div class="card-title">Payment Confirmation</div>
+      <div class="card-body">Payment webhook received → enqueue send-receipt-email + update-order-status tasks.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--pink)">
+      <div class="card-ico">📦</div>
+      <div class="card-title">Order Processing</div>
+      <div class="card-body">Order placed → enqueue update-inventory, notify-warehouse, send-confirmation tasks.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 11 RECURRING ═══ -->
+<section id="recurring" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-b">11</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">TYPE 2 — <span class="b">Recurring / Cron Tasks</span></h2>
+  <div class="prose">
+    <p>Recurring tasks run on a fixed schedule — every hour, every day, every Sunday at midnight. They don't need a user event to trigger them. You define the schedule and the queue executes them automatically.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Task</th><th>Schedule</th><th>What It Does</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Daily Report Email</strong></td><td>Every day at midnight</td><td>Pull yesterday's stats per user, generate HTML email, send to all users with reporting enabled.</td></tr>
+        <tr><td><strong>Weekly Summary</strong></td><td>Every Sunday at 00:00</td><td>Aggregate weekly metrics, generate PDF, email to team/users.</td></tr>
+        <tr><td><strong>Clean Orphan Sessions</strong></td><td>First of every month</td><td>DELETE FROM sessions WHERE last_active < NOW() - INTERVAL '90 days'. Frees DB storage.</td></tr>
+        <tr><td><strong>Expire Trial Accounts</strong></td><td>Every hour</td><td>Find trial accounts where trial_ends_at < NOW(), downgrade to free plan, send email.</td></tr>
+        <tr><td><strong>Refresh Cache</strong></td><td>Every 5 minutes</td><td>Pre-compute expensive queries (trending content, popular products), populate Redis cache.</td></tr>
+        <tr><td><strong>Failed Payment Retry</strong></td><td>Every 24 hours</td><td>Find subscriptions with failed payment, retry charge via Stripe, notify user if still fails.</td></tr>
+        <tr><td><strong>DB Backup Verification</strong></td><td>Every day at 03:00</td><td>Test restore of latest backup to verify integrity. Alert if restore fails.</td></tr>
+        <tr><td><strong>Analytics Aggregation</strong></td><td>Every hour</td><td>Aggregate raw event data into hourly/daily summary tables for dashboard queries.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 12 CHAIN TASKS ═══ -->
+<section id="chain" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-v">12</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">TYPE 3 — <span class="v">Chain Tasks</span></h2>
+  <div class="prose">
+    <p>Chain tasks have a parent-child relationship. Task B cannot start until Task A completes. Some tasks can run in parallel if they don't depend on each other. The classic example is video upload processing on an LMS (Udemy-style) platform.</p>
+  </div>
+
+  <div class="chain">
+    <div class="chain-row">
+      <div class="chain-node" style="border-color:rgba(139,92,246,.4)">
+        <div class="chain-node-title" style="color:var(--violet2)">① Video Upload</div>
+        <div class="chain-node-sub">User uploads → S3 via presigned URL → triggers chain</div>
+      </div>
+      <div class="chain-arrow-h">→</div>
+      <div class="chain-node" style="border-color:rgba(245,158,11,.4)">
+        <div class="chain-node-title" style="color:var(--amber2)">② Video Encoding</div>
+        <div class="chain-node-sub">Encode to 480p, 720p, 1080p — PARENT TASK<br>All subsequent tasks depend on this</div>
+      </div>
+    </div>
+    <div style="margin-left:224px;">
+      <div class="chain-arrow-v"></div>
+      <div class="chain-parallel">
+        <div style="display:flex;flex-direction:column">
+          <div class="chain-node" style="border-color:rgba(59,130,246,.4)">
+            <div class="chain-node-title" style="color:var(--blue2)">③a Thumbnail Generation</div>
+            <div class="chain-node-sub">Extract frames → generate thumbnails</div>
+          </div>
+          <div style="height:10px;width:1px;background:var(--rim2);margin-left:20px;margin-top:4px;"></div>
+          <div class="chain-node" style="border-color:rgba(16,185,129,.4);margin-top:4px">
+            <div class="chain-node-title" style="color:var(--green2)">④ Thumbnail Processing</div>
+            <div class="chain-node-sub">Resize to multiple breakpoints<br>Depends on ③a</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;padding:0 8px;color:var(--muted);font-family:monospace">parallel</div>
+        <div class="chain-node" style="border-color:rgba(249,115,22,.4)">
+          <div class="chain-node-title" style="color:var(--orange2)">③b Transcription</div>
+          <div class="chain-node-sub">Audio → subtitles / captions<br>Runs in parallel with ③a</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout co-v">
+    <div class="callout-lbl">💡 Key Rules of Chain Tasks</div>
+    <div class="callout-txt">
+      <strong>1. A child task only starts when its parent task succeeds.</strong> If video encoding fails, thumbnail generation never starts — there's nothing to generate from.<br><br>
+      <strong>2. Independent children run in parallel.</strong> Thumbnail generation and transcription both depend on encoding, but not on each other — run them simultaneously to save time.<br><br>
+      <strong>3. Failure in a child does NOT fail the parent.</strong> If transcription fails, the video is still uploaded and encoded. The retry mechanism handles transcription separately.
+    </div>
+  </div>
+
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">BullMQ — Chain Tasks with Flow</div></div>
+    <div class="code-pre">
+<span class="cm">// BullMQ has a FlowProducer for chaining tasks</span>
+<span class="kw">import</span> { FlowProducer } <span class="kw">from</span> <span class="str">'bullmq'</span>;
+
+<span class="kw">const</span> flowProducer = <span class="kw">new</span> <span class="fn">FlowProducer</span>({ connection: redisConfig });
+
+<span class="cm">// Define the chain: parent + children</span>
+<span class="cm">// Children only run after the parent completes</span>
+<span class="kw">await</span> flowProducer.<span class="fn">add</span>({
+  name:  <span class="str">'encode-video'</span>,                  <span class="cm">// PARENT</span>
+  queueName: <span class="str">'video-processing'</span>,
+  data:  { videoId: <span class="str">'vid_abc123'</span>, s3Key: <span class="str">'uploads/vid_abc123.mp4'</span> },
+  children: [
+    {
+      name:  <span class="str">'generate-thumbnails'</span>,           <span class="cm">// CHILD 1 — runs after parent</span>
+      queueName: <span class="str">'thumbnail'</span>,
+      data:  { videoId: <span class="str">'vid_abc123'</span> },
+      children: [
+        {
+          name: <span class="str">'process-thumbnails'</span>,          <span class="cm">// GRANDCHILD — runs after child 1</span>
+          queueName: <span class="str">'image-processing'</span>,
+          data: { videoId: <span class="str">'vid_abc123'</span> }
+        }
+      ]
+    },
+    {
+      name:  <span class="str">'generate-transcription'</span>,         <span class="cm">// CHILD 2 — runs in parallel with child 1</span>
+      queueName: <span class="str">'transcription'</span>,
+      data:  { videoId: <span class="str">'vid_abc123'</span> }
+    }
+  ]
+});
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 13 BATCH ═══ -->
+<section id="batch" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-g">13</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">TYPE 4 — <span class="g">Batch Tasks</span></h2>
+  <div class="prose">
+    <p>Batch tasks involve processing a large number of items, usually by spawning many individual tasks from a single trigger. Two patterns: one task spawns many sub-tasks, or a scheduler fires many tasks simultaneously.</p>
+  </div>
+  <div class="cmp2">
+    <div class="cbox" style="border-top:3px solid var(--orange)">
+      <div class="cbox-title">Example 1: Account Deletion</div>
+      <div style="font-size:13px;color:var(--mid);line-height:1.85">
+        User clicks "Delete Account". API responds <strong style="color:var(--text)">instantly with 200</strong>.<br><br>
+        In background, the DELETE_ACCOUNT task spawns sub-tasks:<br>
+        → delete-user-projects<br>
+        → delete-user-assets (S3 files)<br>
+        → delete-user-profile<br>
+        → send-goodbye-email<br>
+        → delete-user-record<br><br>
+        Each sub-task is small, focused, and independently retriable. If deleting assets fails, it retries without restarting the whole deletion.
+      </div>
+    </div>
+    <div class="cbox" style="border-top:3px solid var(--blue)">
+      <div class="cbox-title">Example 2: Weekly Report Send</div>
+      <div style="font-size:13px;color:var(--mid);line-height:1.85">
+        Cron fires every Sunday at midnight.<br><br>
+        It queries all users with reports enabled.<br>
+        For each user, it enqueues a GENERATE_AND_SEND_REPORT task.<br><br>
+        If you have 50,000 users → 50,000 tasks are enqueued simultaneously. Workers process them in parallel. All reports delivered within minutes.<br><br>
+        Without background jobs, you couldn't do this at all — you'd need to run a single synchronous loop for hours.
+      </div>
+    </div>
+  </div>
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">Batch Task — Spawning Sub-Tasks from a Parent</div></div>
+    <div class="code-pre">
+<span class="cm">// ─── Handler: DELETE_ACCOUNT task spawns sub-tasks ─────────────────</span>
+deleteAccountWorker.<span class="fn">process</span>(<span class="str">'delete-account'</span>, <span class="kw">async</span> (job) => {
+  <span class="kw">const</span> { userId } = job.data;
+
+  <span class="cm">// Get all resources this user owns</span>
+  <span class="kw">const</span> [projects, assets] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+    db.<span class="fn">query</span>(<span class="str">'SELECT id FROM projects WHERE owner_id = $1'</span>, [userId]),
+    db.<span class="fn">query</span>(<span class="str">'SELECT s3_key FROM user_assets WHERE user_id = $1'</span>, [userId]),
+  ]);
+
+  <span class="cm">// Spawn sub-tasks in BULK (efficient — single Redis command)</span>
+  <span class="kw">await</span> deletionQueue.<span class="fn">addBulk</span>([
+    ...projects.rows.<span class="fn">map</span>(p => ({
+      name: <span class="str">'delete-project'</span>,
+      data: { projectId: p.id, userId }
+    })),
+    ...assets.rows.<span class="fn">map</span>(a => ({
+      name: <span class="str">'delete-s3-asset'</span>,
+      data: { s3Key: a.s3_key }
+    })),
+    { name: <span class="str">'delete-user-profile'</span>, data: { userId } },
+    { name: <span class="str">'send-goodbye-email'</span>, data: { userId } },
+  ]);
+  <span class="cm">// All sub-tasks run in parallel, each independently retriable</span>
+});
+
+<span class="cm">// ─── Weekly Reports — Batch Enqueue ──────────────────────────────</span>
+reportCronWorker.<span class="fn">process</span>(<span class="str">'weekly-reports-trigger'</span>, <span class="kw">async</span> () => {
+  <span class="kw">const</span> users = <span class="kw">await</span> db.<span class="fn">query</span>(
+    <span class="str">'SELECT id, email FROM users WHERE weekly_report_enabled = true'</span>
+  );
+
+  <span class="cm">// Enqueue ALL user report tasks at once — bulk is much faster than loop</span>
+  <span class="kw">await</span> reportQueue.<span class="fn">addBulk</span>(
+    users.rows.<span class="fn">map</span>(user => ({
+      name: <span class="str">'generate-user-report'</span>,
+      data: { userId: user.id, email: user.email },
+      opts: { attempts: <span class="num">3</span>, backoff: { type: <span class="str">'exponential'</span>, delay: <span class="num">60000</span> } }
+    }))
+  );
+  <span class="cm">// 50,000 tasks enqueued → workers process in parallel → all done in minutes</span>
+});
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 14 RETRIES ═══ -->
+<section id="retries" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-o">14</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">RETRIES — <span class="o">Exponential Backoff</span></h2>
+  <div class="prose">
+    <p>When a task fails, you don't want to immediately retry it. If the external service is down, retrying in 1 second will fail again. Exponential backoff means increasing the delay between retries exponentially — giving the external service time to recover while not hammering it with retries.</p>
+  </div>
+
+  <div class="backoff-grid">
+    <div class="bf bf-fail">
+      <div class="bf-attempt">// ATTEMPT 1</div>
+      <div class="bf-time" style="color:var(--red2)">FAIL</div>
+      <div class="bf-unit">email API down</div>
+    </div>
+    <div class="bf bf-fail">
+      <div class="bf-attempt">// RETRY 1</div>
+      <div class="bf-time" style="font-size:16px">wait 1 min</div>
+      <div class="bf-unit" style="color:var(--red2)">still down</div>
+    </div>
+    <div class="bf bf-fail">
+      <div class="bf-attempt">// RETRY 2</div>
+      <div class="bf-time" style="font-size:16px">wait 2 min</div>
+      <div class="bf-unit" style="color:var(--red2)">still down</div>
+    </div>
+    <div class="bf bf-ok">
+      <div class="bf-attempt">// RETRY 3</div>
+      <div class="bf-time" style="font-size:16px">wait 4 min</div>
+      <div class="bf-unit" style="color:var(--green2)">back up ✓</div>
+    </div>
+    <div class="bf bf-ok">
+      <div class="bf-attempt">// RESULT</div>
+      <div class="bf-time">✓</div>
+      <div class="bf-unit">email sent</div>
+    </div>
+  </div>
+
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">Exponential Backoff — BullMQ Configuration</div></div>
+    <div class="code-pre">
+<span class="cm">// ─── Job Options with Retry Configuration ────────────────────────</span>
+<span class="kw">await</span> emailQueue.<span class="fn">add</span>(<span class="str">'send-verification'</span>, taskData, {
+  attempts: <span class="num">5</span>,                   <span class="cm">// max 5 total attempts (1 original + 4 retries)</span>
+  backoff: {
+    type:  <span class="str">'exponential'</span>,         <span class="cm">// delay doubles on each failure</span>
+    delay: <span class="num">60000</span>,                  <span class="cm">// start with 60 seconds (1 min)</span>
+  },
+  <span class="cm">// Retry schedule:</span>
+  <span class="cm">// Attempt 1: immediate</span>
+  <span class="cm">// Retry 1:   60s   (1 min)</span>
+  <span class="cm">// Retry 2:   120s  (2 min)</span>
+  <span class="cm">// Retry 3:   240s  (4 min)</span>
+  <span class="cm">// Retry 4:   480s  (8 min)</span>
+  <span class="cm">// After 5th failure → moves to Dead Letter Queue</span>
+
+  removeOnComplete: { count: <span class="num">1000</span> },  <span class="cm">// keep last 1000 completed jobs for inspection</span>
+  removeOnFail:     { count: <span class="num">5000</span> },  <span class="cm">// keep last 5000 failed jobs in DLQ</span>
+});
+
+<span class="cm">// ─── Different configs for different task types ───────────────────</span>
+<span class="kw">const</span> JOB_OPTIONS = {
+  <span class="cm">// Email: up to 5 retries, exponential starting 1 min</span>
+  email: {
+    attempts: <span class="num">5</span>,
+    backoff:  { type: <span class="str">'exponential'</span>, delay: <span class="num">60_000</span> }
+  },
+  <span class="cm">// Image processing: 3 retries, linear 30s backoff</span>
+  imageProcess: {
+    attempts: <span class="num">3</span>,
+    backoff:  { type: <span class="str">'fixed'</span>, delay: <span class="num">30_000</span> }
+  },
+  <span class="cm">// Payment: up to 3 retries over 24 hours</span>
+  payment: {
+    attempts: <span class="num">3</span>,
+    backoff:  { type: <span class="str">'exponential'</span>, delay: <span class="num">3_600_000</span> }  <span class="cm">// 1h, 2h, 4h</span>
+  },
+  <span class="cm">// Non-critical notification: 2 retries, fail fast</span>
+  notification: {
+    attempts: <span class="num">2</span>,
+    backoff:  { type: <span class="str">'fixed'</span>, delay: <span class="num">5_000</span> }
+  }
+};
+
+<span class="cm">// ─── Access retry info inside the handler ─────────────────────────</span>
+emailWorker.<span class="fn">process</span>(<span class="kw">async</span> (job) => {
+  console.<span class="fn">log</span>(<span class="str">`Attempt ${job.attemptsMade + 1} of ${job.opts.attempts}`</span>);
+
+  <span class="kw">try</span> {
+    <span class="kw">await</span> <span class="fn">sendEmail</span>(job.data);
+  } <span class="kw">catch</span> (err) {
+    <span class="cm">// Log every failure with context</span>
+    console.<span class="fn">error</span>({
+      jobId:    job.id,
+      attempt:  job.attemptsMade + <span class="num">1</span>,
+      error:    err.message,
+      data:     job.data,
+    });
+    <span class="kw">throw</span> err;  <span class="cm">// Re-throw to trigger retry mechanism</span>
+  }
+});
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 15 IDEMPOTENCY ═══ -->
+<section id="idempotency" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-g">15</span><span class="lv lv-s">Senior</span></div>
+  <h2 class="sec-title">IDEMPOTENCY — <span class="g">The Most Critical Design Principle</span></h2>
+  <div class="prose">
+    <p>Idempotency means: <strong>running a task multiple times produces the same result as running it once.</strong> This is critical because retries are fundamental to background job systems. If your email task fails and retries, you do NOT want the user to receive two emails. If your delete-account task retries halfway through, you do NOT want it to crash because it tries to delete something already deleted.</p>
+  </div>
+  <div class="analogy">
+    <div class="analogy-lbl">💡 The Light Switch Analogy</div>
+    <div class="analogy-body">A light switch is idempotent. Pressing "ON" when the light is already on does nothing harmful. But a counter "increment by 1 on every click" is NOT idempotent — clicking it multiple times changes the result. Your tasks must be light switches, not counters — safe to execute multiple times with the same outcome.</div>
+  </div>
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">Idempotency Patterns — How to Design Safe Tasks</div></div>
+    <div class="code-pre">
+<span class="cm">// ─── PROBLEM: Non-Idempotent Email Task ───────────────────────────</span>
+<span class="cm">// If this task retries, the user gets TWO emails. Bad.</span>
+emailWorker.<span class="fn">process</span>(<span class="kw">async</span> (job) => {
+  <span class="kw">await</span> <span class="fn">sendEmail</span>(job.data);  <span class="cm">// ← retries = duplicate emails ❌</span>
+});
+
+<span class="cm">// ─── SOLUTION 1: Idempotency Key ─────────────────────────────────</span>
+<span class="cm">// Before sending, check if we already sent this specific email</span>
+emailWorker.<span class="fn">process</span>(<span class="kw">async</span> (job) => {
+  <span class="kw">const</span> idempotencyKey = <span class="str">`email_sent:${job.id}`</span>;
+
+  <span class="cm">// Check if already sent (Redis SET NX = atomic "set if not exists")</span>
+  <span class="kw">const</span> alreadySent = <span class="kw">await</span> redis.<span class="fn">set</span>(idempotencyKey, <span class="str">'1'</span>, <span class="str">'NX'</span>, <span class="str">'EX'</span>, <span class="num">86400</span>);
+
+  <span class="kw">if</span> (!alreadySent) {
+    console.<span class="fn">log</span>(<span class="str">'Email already sent, skipping duplicate'</span>);
+    <span class="kw">return</span>;  <span class="cm">// ACK without doing anything — safe to skip</span>
+  }
+
+  <span class="kw">await</span> <span class="fn">sendEmail</span>(job.data);  <span class="cm">// Only runs if key was NOT already set</span>
+});
+
+<span class="cm">// ─── SOLUTION 2: Database Status Check ────────────────────────────</span>
+<span class="cm">// Track in DB whether the operation already happened</span>
+accountDeletionWorker.<span class="fn">process</span>(<span class="str">'delete-project'</span>, <span class="kw">async</span> (job) => {
+  <span class="kw">const</span> { projectId, userId } = job.data;
+
+  <span class="cm">// Check if project is already deleted (idempotency check)</span>
+  <span class="kw">const</span> project = <span class="kw">await</span> db.<span class="fn">query</span>(
+    <span class="str">'SELECT id, deleted_at FROM projects WHERE id = $1'</span>,
+    [projectId]
+  );
+
+  <span class="kw">if</span> (!project.rows[<span class="num">0</span>] || project.rows[<span class="num">0</span>].deleted_at) {
+    <span class="kw">return</span>;  <span class="cm">// Already deleted — safe to return without error</span>
+  }
+
+  <span class="cm">// Use a DB TRANSACTION — all-or-nothing</span>
+  <span class="kw">const</span> client = <span class="kw">await</span> db.<span class="fn">connect</span>();
+  <span class="kw">try</span> {
+    <span class="kw">await</span> client.<span class="fn">query</span>(<span class="str">'BEGIN'</span>);
+    <span class="kw">await</span> client.<span class="fn">query</span>(<span class="str">'DELETE FROM project_members WHERE project_id = $1'</span>, [projectId]);
+    <span class="kw">await</span> client.<span class="fn">query</span>(<span class="str">'DELETE FROM tasks WHERE project_id = $1'</span>, [projectId]);
+    <span class="kw">await</span> client.<span class="fn">query</span>(<span class="str">'DELETE FROM projects WHERE id = $1'</span>, [projectId]);
+    <span class="kw">await</span> client.<span class="fn">query</span>(<span class="str">'COMMIT'</span>);
+  } <span class="kw">catch</span> (err) {
+    <span class="kw">await</span> client.<span class="fn">query</span>(<span class="str">'ROLLBACK'</span>);
+    <span class="kw">throw</span> err;  <span class="cm">// Re-throw → triggers retry from scratch (transaction rolled back = clean state)</span>
+  } <span class="kw">finally</span> {
+    client.<span class="fn">release</span>();
+  }
+});
+
+<span class="cm">// ─── SOLUTION 3: Upsert instead of Insert ────────────────────────</span>
+<span class="cm">// If your task creates a record, use INSERT ... ON CONFLICT DO NOTHING</span>
+<span class="kw">await</span> db.<span class="fn">query</span>(<span class="str">`
+  INSERT INTO email_logs (job_id, user_id, email_type, sent_at)
+  VALUES ($1, $2, $3, NOW())
+  ON CONFLICT (job_id) DO NOTHING
+`</span>, [job.id, userId, emailType]);
+<span class="cm">// If this runs twice (retry), the second insert is silently ignored</span>
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 16 DEAD LETTER ═══ -->
+<section id="dead-letter" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-r">16</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">DEAD LETTER <span class="r">QUEUE (DLQ)</span></h2>
+  <div class="prose">
+    <p>When a task exhausts all its retry attempts and still fails, it moves to the Dead Letter Queue. The DLQ is a separate queue that holds permanently-failed tasks. You don't lose them — you store them safely so you can investigate, fix the bug, and re-queue them manually.</p>
+  </div>
+  <div class="callout co-r">
+    <div class="callout-lbl">⚠️ Without a DLQ</div>
+    <div class="callout-txt">If you have no DLQ and a task fails all retries, the task data is gone forever. You have no way to know which users didn't receive their email, which accounts weren't deleted, which reports weren't generated. Production systems MUST have a DLQ and an alerting system that fires when tasks land in it.</div>
+  </div>
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">Dead Letter Queue — Setup & Monitoring</div></div>
+    <div class="code-pre">
+<span class="cm">// ─── BullMQ: listen for failed events ────────────────────────────</span>
+<span class="kw">const</span> queueEvents = <span class="kw">new</span> <span class="fn">QueueEvents</span>(<span class="str">'email'</span>, { connection: redisConfig });
+
+queueEvents.on(<span class="str">'failed'</span>, <span class="kw">async</span> ({ jobId, failedReason }) => {
+  <span class="kw">const</span> job = <span class="kw">await</span> emailQueue.<span class="fn">getJob</span>(jobId);
+
+  <span class="kw">if</span> (job && job.attemptsMade >= job.opts.attempts) {
+    <span class="cm">// This job has exhausted ALL retries → it's in the DLQ</span>
+    console.<span class="fn">error</span>(<span class="str">'JOB PERMANENTLY FAILED'</span>, {
+      jobId,
+      failedReason,
+      data: job.data,
+    });
+
+    <span class="cm">// 1. Store in database for investigation</span>
+    <span class="kw">await</span> db.<span class="fn">query</span>(<span class="str">`
+      INSERT INTO failed_jobs (job_id, queue, data, error, failed_at)
+      VALUES ($1, $2, $3, $4, NOW())
+    `</span>, [jobId, <span class="str">'email'</span>, <span class="fn">JSON.stringify</span>(job.data), failedReason]);
+
+    <span class="cm">// 2. Send alert to engineering team (Slack, PagerDuty, email)</span>
+    <span class="kw">await</span> <span class="fn">sendSlackAlert</span>({
+      channel: <span class="str">'#alerts-background-jobs'</span>,
+      text:    <span class="str">`🚨 Job permanently failed: ${job.name} | ${failedReason}`</span>,
+      data:    job.data,
+    });
+  }
+});
+
+<span class="cm">// ─── Manual retry from DLQ (after fixing the bug) ────────────────</span>
+<span class="kw">async function</span> <span class="fn">retryDeadLetterJobs</span>(queueName: <span class="fn">string</span>) {
+  <span class="kw">const</span> queue = <span class="kw">new</span> <span class="fn">Queue</span>(queueName, { connection: redisConfig });
+  <span class="kw">const</span> failedJobs = <span class="kw">await</span> queue.<span class="fn">getFailed</span>();
+
+  <span class="kw">for</span> (<span class="kw">const</span> job <span class="kw">of</span> failedJobs) {
+    <span class="kw">await</span> job.<span class="fn">retry</span>();  <span class="cm">// Re-queue the job after fixing the underlying issue</span>
+  }
+  console.<span class="fn">log</span>(<span class="str">`Retried ${failedJobs.length} failed jobs from ${queueName}`</span>);
+}
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 17 BULLMQ SETUP ═══ -->
+<section id="bullmq" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-v">17</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">BULLMQ — <span class="v">Setup & Architecture</span></h2>
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">BullMQ — Project Structure & Setup</div></div>
+    <div class="code-pre">
+<span class="cm">// ─── Install ─────────────────────────────────────────────────────</span>
+<span class="cm">// npm install bullmq ioredis</span>
+
+<span class="cm">// ─── Project Structure ────────────────────────────────────────────</span>
+<span class="gg">src/</span>
+<span class="gg">  queues/</span>
+<span class="gg">    index.ts          </span><span class="cm">// all Queue instances exported from here</span>
+<span class="gg">    email.queue.ts    </span><span class="cm">// email queue definition</span>
+<span class="gg">    media.queue.ts    </span><span class="cm">// media processing queue</span>
+<span class="gg">    report.queue.ts   </span><span class="cm">// report generation queue</span>
+<span class="gg">  workers/</span>
+<span class="gg">    index.ts          </span><span class="cm">// start all workers (entry point for worker process)</span>
+<span class="gg">    email.worker.ts   </span><span class="cm">// email worker logic</span>
+<span class="gg">    media.worker.ts   </span><span class="cm">// media worker logic</span>
+<span class="gg">    report.worker.ts  </span><span class="cm">// report worker logic</span>
+<span class="gg">  jobs/</span>
+<span class="gg">    email.jobs.ts     </span><span class="cm">// job types & helper functions to enqueue email jobs</span>
+<span class="gg">    media.jobs.ts</span>
+<span class="gg">  config/</span>
+<span class="gg">    redis.ts          </span><span class="cm">// shared Redis connection config</span>
+
+<span class="cm">// ─── config/redis.ts ─────────────────────────────────────────────</span>
+<span class="kw">export const</span> redisConfig = {
+  host: process.env.REDIS_HOST || <span class="str">'localhost'</span>,
+  port: <span class="fn">parseInt</span>(process.env.REDIS_PORT || <span class="str">'6379'</span>),
+  password: process.env.REDIS_PASSWORD,
+  maxRetriesPerRequest: <span class="kw">null</span>,   <span class="cm">// required for BullMQ</span>
+};
+
+<span class="cm">// ─── queues/email.queue.ts ────────────────────────────────────────</span>
+<span class="kw">import</span> { Queue } <span class="kw">from</span> <span class="str">'bullmq'</span>;
+<span class="kw">import</span> { redisConfig } <span class="kw">from</span> <span class="str">'../config/redis'</span>;
+
+<span class="kw">export const</span> emailQueue = <span class="kw">new</span> <span class="fn">Queue</span>(<span class="str">'email'</span>, {
+  connection: redisConfig,
+  defaultJobOptions: {
+    attempts:         <span class="num">5</span>,
+    backoff:          { type: <span class="str">'exponential'</span>, delay: <span class="num">60_000</span> },
+    removeOnComplete: { count: <span class="num">1000</span>, age: <span class="num">86400</span> },  <span class="cm">// keep for 24h</span>
+    removeOnFail:     { count: <span class="num">5000</span>, age: <span class="num">604800</span> }, <span class="cm">// keep for 7 days</span>
+  }
+});
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 18 BULLMQ FULL CODE ═══ -->
+<section id="bullmq-code" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-o">18</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">BULLMQ — <span class="o">Complete Implementation</span></h2>
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">Email Queue — Producer + Worker + Scheduling</div></div>
+    <div class="code-pre">
+<span class="cm">// ─── jobs/email.jobs.ts — Helper functions for producers ─────────</span>
+<span class="kw">import</span> { emailQueue } <span class="kw">from</span> <span class="str">'../queues/email.queue'</span>;
+
+<span class="cm">// These functions are called from your API route handlers</span>
+<span class="kw">export async function</span> <span class="fn">queueVerificationEmail</span>(userId: <span class="fn">string</span>, email: <span class="fn">string</span>, code: <span class="fn">string</span>) {
+  <span class="kw">return</span> emailQueue.<span class="fn">add</span>(<span class="str">'send-verification'</span>, { userId, email, code }, {
+    jobId:    <span class="str">`verify-${userId}`</span>,   <span class="cm">// deduplicate: same userId won't create duplicate jobs</span>
+    priority: <span class="num">1</span>,                    <span class="cm">// high priority (1 = highest)</span>
+  });
+}
+
+<span class="kw">export async function</span> <span class="fn">queueWelcomeEmail</span>(userId: <span class="fn">string</span>, email: <span class="fn">string</span>, name: <span class="fn">string</span>) {
+  <span class="kw">return</span> emailQueue.<span class="fn">add</span>(<span class="str">'send-welcome'</span>, { userId, email, name }, {
+    delay:    <span class="num">300_000</span>,  <span class="cm">// wait 5 minutes before sending (avoid overwhelming new user)</span>
+    priority: <span class="num">5</span>,
+  });
+}
+
+<span class="kw">export async function</span> <span class="fn">queuePasswordResetEmail</span>(userId: <span class="fn">string</span>, email: <span class="fn">string</span>, token: <span class="fn">string</span>) {
+  <span class="kw">return</span> emailQueue.<span class="fn">add</span>(<span class="str">'send-password-reset'</span>, { userId, email, token }, {
+    priority: <span class="num">1</span>,  <span class="cm">// high priority — user is actively waiting</span>
+  });
+}
+
+<span class="cm">// ─── Route Handler (Producer) ─────────────────────────────────────</span>
+<span class="cm">// auth.controller.ts</span>
+app.<span class="fn">post</span>(<span class="str">'/auth/signup'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> { email, password, name } = req.body;
+
+  <span class="cm">// 1. Validate & save user</span>
+  <span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">createUser</span>({ email, password, name });
+  <span class="kw">const</span> code = <span class="fn">generateVerificationCode</span>();
+  <span class="kw">await</span> <span class="fn">saveVerificationCode</span>(user.id, code);
+
+  <span class="cm">// 2. Enqueue email (takes ~2ms)</span>
+  <span class="kw">await</span> <span class="fn">queueVerificationEmail</span>(user.id, email, code);
+  <span class="kw">await</span> <span class="fn">queueWelcomeEmail</span>(user.id, email, name);  <span class="cm">// delayed 5min</span>
+
+  <span class="cm">// 3. Respond immediately — do NOT wait for email to send</span>
+  res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>({
+    message: <span class="str">'Account created. Please check your email to verify your account.'</span>,
+    userId:  user.id,
+  });
+});
+
+<span class="cm">// ─── workers/email.worker.ts (Consumer) ──────────────────────────</span>
+<span class="kw">import</span> { Worker, QueueEvents } <span class="kw">from</span> <span class="str">'bullmq'</span>;
+
+<span class="kw">const</span> emailWorker = <span class="kw">new</span> <span class="fn">Worker</span>(<span class="str">'email'</span>, <span class="kw">async</span> (job) => {
+  console.<span class="fn">log</span>(<span class="str">`Processing job: ${job.name} | ID: ${job.id}`</span>);
+
+  <span class="kw">switch</span> (job.name) {
+    <span class="kw">case</span> <span class="str">'send-verification'</span>:
+      <span class="kw">await</span> <span class="fn">sendVerificationEmail</span>(job.data);
+      <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="str">'send-welcome'</span>:
+      <span class="kw">await</span> <span class="fn">sendWelcomeEmail</span>(job.data);
+      <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="str">'send-password-reset'</span>:
+      <span class="kw">await</span> <span class="fn">sendPasswordResetEmail</span>(job.data);
+      <span class="kw">break</span>;
+    <span class="kw">default</span>:
+      <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`Unknown job type: ${job.name}`</span>);
+  }
+}, {
+  connection:   redisConfig,
+  concurrency:  <span class="num">5</span>,            <span class="cm">// process up to 5 email jobs simultaneously</span>
+  lockDuration: <span class="num">30_000</span>,       <span class="cm">// 30 second visibility timeout</span>
+});
+
+emailWorker.on(<span class="str">'completed'</span>, (job) => console.<span class="fn">log</span>(<span class="str">`✅ ${job.name} completed`</span>));
+emailWorker.on(<span class="str">'failed'</span>,    (job, err) => console.<span class="fn">error</span>(<span class="str">`❌ ${job?.name} failed: ${err.message}`</span>));
+emailWorker.on(<span class="str">'stalled'</span>,  (jobId)    => console.<span class="fn">warn</span>(<span class="str">`⚠️ Job ${jobId} stalled`</span>));
+
+<span class="cm">// ─── Recurring Jobs (Cron) ────────────────────────────────────────</span>
+<span class="kw">import</span> { Queue } <span class="kw">from</span> <span class="str">'bullmq'</span>;
+<span class="kw">const</span> schedulerQueue = <span class="kw">new</span> <span class="fn">Queue</span>(<span class="str">'scheduler'</span>, { connection: redisConfig });
+
+<span class="cm">// Daily report at midnight</span>
+<span class="kw">await</span> schedulerQueue.<span class="fn">add</span>(
+  <span class="str">'daily-reports'</span>,
+  {},
+  { repeat: { pattern: <span class="str">'0 0 * * *'</span> } }   <span class="cm">// cron: at 00:00 every day</span>
+);
+
+<span class="cm">// Clean orphan sessions every month on the 1st</span>
+<span class="kw">await</span> schedulerQueue.<span class="fn">add</span>(
+  <span class="str">'clean-orphan-sessions'</span>,
+  {},
+  { repeat: { pattern: <span class="str">'0 2 1 * *'</span> } }   <span class="cm">// cron: 02:00 on the 1st of each month</span>
+);
+
+<span class="cm">// Expire trial accounts every hour</span>
+<span class="kw">await</span> schedulerQueue.<span class="fn">add</span>(
+  <span class="str">'expire-trials'</span>,
+  {},
+  { repeat: { every: <span class="num">3_600_000</span> } }       <span class="cm">// every 60 minutes</span>
+);
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 19 CRON ═══ -->
+<section id="cron-jobs" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-b">19</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">CRON SYNTAX — <span class="b">Scheduling Reference</span></h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Expression</th><th>Meaning</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td><code>0 0 * * *</code></td><td>Every day at midnight (00:00)</td><td>Daily reports, daily cleanup</td></tr>
+        <tr><td><code>0 2 * * *</code></td><td>Every day at 2:00 AM</td><td>Maintenance (low traffic time)</td></tr>
+        <tr><td><code>0 0 * * 0</code></td><td>Every Sunday at midnight</td><td>Weekly reports</td></tr>
+        <tr><td><code>0 2 1 * *</code></td><td>1st of every month at 2:00 AM</td><td>Monthly cleanup, billing</td></tr>
+        <tr><td><code>*/5 * * * *</code></td><td>Every 5 minutes</td><td>Cache refresh, health checks</td></tr>
+        <tr><td><code>0 */1 * * *</code></td><td>Every hour at :00</td><td>Trial expiry checks, analytics</td></tr>
+        <tr><td><code>0 9 * * 1-5</code></td><td>Monday-Friday at 9 AM</td><td>Business-hours-only tasks</td></tr>
+        <tr><td><code>0 0 1 1 *</code></td><td>January 1st at midnight</td><td>Annual reports</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout co-b">
+    <div class="callout-lbl">⚠️ Cron in a Distributed System</div>
+    <div class="callout-txt">If you have 3 worker instances and a cron fires, ALL 3 workers will try to execute it — causing the task to run 3 times. Prevent this by using a <strong>distributed lock</strong> (Redis SET NX at the start of the cron handler) OR by using BullMQ's built-in scheduler (which ensures only one instance picks up the repeatable job). Never run cron on multiple instances without a lock.</div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 20 USE CASES ═══ -->
+<section id="email" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-o">20</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">USE CASE 1 — <span class="o">Email Sending (Full Flow)</span></h2>
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">Email Worker — Idempotent + Retry Safe Implementation</div></div>
+    <div class="code-pre">
+<span class="cm">// ─── Email sending function (calls Resend API) ────────────────────</span>
+<span class="kw">import</span> { Resend } <span class="kw">from</span> <span class="str">'resend'</span>;
+
+<span class="kw">const</span> resend = <span class="kw">new</span> <span class="fn">Resend</span>(process.env.RESEND_API_KEY);
+
+<span class="kw">async function</span> <span class="fn">sendVerificationEmail</span>(data: {
+  userId: <span class="fn">string</span>; email: <span class="fn">string</span>; code: <span class="fn">string</span>; jobId: <span class="fn">string</span>;
+}) {
+  <span class="cm">// Idempotency: check if this specific email was already sent</span>
+  <span class="kw">const</span> alreadySent = <span class="kw">await</span> redis.<span class="fn">get</span>(<span class="str">`email_sent:${data.jobId}`</span>);
+  <span class="kw">if</span> (alreadySent) {
+    console.<span class="fn">log</span>(<span class="str">'Skipping duplicate email'</span>, data.jobId);
+    <span class="kw">return</span>;
+  }
+
+  <span class="kw">const</span> { error } = <span class="kw">await</span> resend.emails.<span class="fn">send</span>({
+    from:    <span class="str">'YourApp &lt;noreply@yourapp.com&gt;'</span>,
+    to:      data.email,
+    subject: <span class="str">'Verify your email address'</span>,
+    html:    <span class="fn">renderVerificationTemplate</span>({ code: data.code }),
+  });
+
+  <span class="kw">if</span> (error) {
+    <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`Resend API error: ${error.message}`</span>);
+  }
+
+  <span class="cm">// Mark as sent — prevents duplicate sends on retry</span>
+  <span class="kw">await</span> redis.<span class="fn">set</span>(<span class="str">`email_sent:${data.jobId}`</span>, <span class="str">'1'</span>, <span class="str">'EX'</span>, <span class="num">86400</span>);
+
+  <span class="cm">// Log to DB for audit trail</span>
+  <span class="kw">await</span> db.<span class="fn">query</span>(<span class="str">`
+    INSERT INTO email_logs (user_id, email_type, sent_at, job_id)
+    VALUES ($1, 'verification', NOW(), $2)
+    ON CONFLICT (job_id) DO NOTHING
+  `</span>, [data.userId, data.jobId]);
+}
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<section id="media" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-b">21</span><span class="lv lv-m">Mid-Level</span></div>
+  <h2 class="sec-title">USE CASE 2 — <span class="b">Image Processing</span></h2>
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">Image Processing Worker — Multi-Resolution Resize</div></div>
+    <div class="code-pre">
+<span class="cm">// npm install sharp @aws-sdk/client-s3</span>
+<span class="kw">import</span> sharp <span class="kw">from</span> <span class="str">'sharp'</span>;
+<span class="kw">import</span> { S3Client, GetObjectCommand, PutObjectCommand } <span class="kw">from</span> <span class="str">'@aws-sdk/client-s3'</span>;
+
+<span class="kw">const</span> BREAKPOINTS = [
+  { name: <span class="str">'thumbnail'</span>, width: <span class="num">150</span>,  height: <span class="num">150</span>  },
+  { name: <span class="str">'small'</span>,     width: <span class="num">400</span>,  height: <span class="num">300</span>  },
+  { name: <span class="str">'medium'</span>,    width: <span class="num">800</span>,  height: <span class="num">600</span>  },
+  { name: <span class="str">'large'</span>,     width: <span class="num">1200</span>, height: <span class="num">900</span>  },
+];
+
+imageWorker.<span class="fn">process</span>(<span class="str">'process-image'</span>, <span class="kw">async</span> (job) => {
+  <span class="kw">const</span> { imageId, s3Key, userId } = job.data;
+
+  <span class="cm">// Update status in DB</span>
+  <span class="kw">await</span> db.<span class="fn">query</span>(<span class="str">'UPDATE images SET status = $1 WHERE id = $2'</span>, [<span class="str">'processing'</span>, imageId]);
+
+  <span class="cm">// Download original from S3</span>
+  <span class="kw">const</span> original = <span class="kw">await</span> <span class="fn">downloadFromS3</span>(s3Key);
+
+  <span class="cm">// Process all breakpoints in parallel</span>
+  <span class="kw">const</span> processedVariants = <span class="kw">await</span> Promise.<span class="fn">all</span>(
+    BREAKPOINTS.<span class="fn">map</span>(<span class="kw">async</span> (bp) => {
+      <span class="kw">const</span> resized = <span class="kw">await</span> sharp(original)
+        .<span class="fn">resize</span>(bp.width, bp.height, { fit: <span class="str">'cover'</span> })
+        .<span class="fn">webp</span>({ quality: <span class="num">85</span> })
+        .<span class="fn">toBuffer</span>();
+
+      <span class="kw">const</span> variantKey = <span class="str">`images/${userId}/${imageId}/${bp.name}.webp`</span>;
+      <span class="kw">await</span> <span class="fn">uploadToS3</span>(variantKey, resized, <span class="str">'image/webp'</span>);
+
+      <span class="kw">return</span> { size: bp.name, s3Key: variantKey, width: bp.width };
+    })
+  );
+
+  <span class="cm">// Save variant URLs to DB, mark as complete</span>
+  <span class="kw">await</span> db.<span class="fn">query</span>(<span class="str">`
+    UPDATE images
+    SET status = 'completed', variants = $1, processed_at = NOW()
+    WHERE id = $2
+  `</span>, [<span class="fn">JSON.stringify</span>(processedVariants), imageId]);
+
+  <span class="cm">// Report progress to BullMQ UI</span>
+  <span class="kw">await</span> job.<span class="fn">updateProgress</span>(<span class="num">100</span>);
+});
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 21 PRODUCTION DESIGN FRAMEWORK ═══ -->
+<section id="design-framework" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-v">22</span><span class="lv lv-s">Senior</span></div>
+  <h2 class="sec-title">THE PRODUCTION DESIGN <span class="v">FRAMEWORK</span></h2>
+  <div class="prose">
+    <p>When a client gives you a project and asks you to design the background job system, here is the 8-step framework to think through it systematically. This is what senior engineers do — they think before they code.</p>
+  </div>
+
+  <div class="design-step">
+    <div class="ds-num">01</div>
+    <div class="ds-body">
+      <div class="ds-title">Identify Every Background Task</div>
+      <div class="ds-desc">Go through the entire feature list and ask: "Does this need to happen in the request-response cycle?" For anything involving <strong>external services, heavy computation, or operations that can take more than 200ms</strong> — mark it as a background job. Create a list: emails, notifications, media processing, report generation, data sync, webhooks, scheduled cleanup.</div>
+    </div>
+  </div>
+
+  <div class="design-step">
+    <div class="ds-num">02</div>
+    <div class="ds-body">
+      <div class="ds-title">Classify Each Task by Type</div>
+      <div class="ds-desc">Label each task: <strong>One-Off</strong> (triggered by a user action), <strong>Recurring</strong> (scheduled on a cron), <strong>Chain</strong> (depends on another task), or <strong>Batch</strong> (spawns multiple sub-tasks). This classification tells you how to configure the queue — chains need FlowProducer, crons need repeat patterns, batches need addBulk.</div>
+    </div>
+  </div>
+
+  <div class="design-step">
+    <div class="ds-num">03</div>
+    <div class="ds-body">
+      <div class="ds-title">Design Queue Architecture — Separate Queues Per Domain</div>
+      <div class="ds-desc">Never put all jobs in one queue. Create separate queues for each concern: <strong>email, media-processing, notifications, reports, scheduler, deletions</strong>. This lets you scale workers independently (add more email workers during a campaign), set different concurrency per queue, and monitor each domain separately. One slow media queue won't block email delivery.</div>
+    </div>
+  </div>
+
+  <div class="design-step">
+    <div class="ds-num">04</div>
+    <div class="ds-body">
+      <div class="ds-title">Configure Retry Strategy Per Task Type</div>
+      <div class="ds-desc">Not all tasks need the same retry behavior. <strong>Emails: 5 retries, exponential from 1min.</strong> <strong>Payments: 3 retries, 1h/2h/4h.</strong> <strong>Image processing: 3 retries, linear 30s.</strong> <strong>Notifications: 2 retries, 5s.</strong> Set appropriate visibility timeouts too — media processing needs minutes, email needs seconds.</div>
+    </div>
+  </div>
+
+  <div class="design-step">
+    <div class="ds-num">05</div>
+    <div class="ds-body">
+      <div class="ds-title">Design for Idempotency From the Start</div>
+      <div class="ds-desc">For every task handler, ask: "If this runs twice, what breaks?" Then fix it. Use idempotency keys in Redis (SET NX) for external calls. Use INSERT ... ON CONFLICT DO NOTHING for DB records. Use transactions with rollback for multi-step DB operations. Assume every task WILL run at least twice — design accordingly.</div>
+    </div>
+  </div>
+
+  <div class="design-step">
+    <div class="ds-num">06</div>
+    <div class="ds-body">
+      <div class="ds-title">Set Up Dead Letter Queue + Alerting</div>
+      <div class="ds-desc">Every queue must have a DLQ strategy. When jobs exhaust retries: store them in a <code>failed_jobs</code> DB table, send an alert to Slack/PagerDuty, and make them manually retriable after you fix the bug. Without this, permanently failed jobs disappear silently. In production, DLQ alerts should wake someone up.</div>
+    </div>
+  </div>
+
+  <div class="design-step">
+    <div class="ds-num">07</div>
+    <div class="ds-body">
+      <div class="ds-title">Plan Worker Scaling Strategy</div>
+      <div class="ds-desc">Workers must be <strong>stateless</strong> — any worker can handle any task. Set concurrency per worker (how many jobs one worker processes simultaneously). Plan for horizontal scaling — how many worker instances will you run? In Kubernetes, workers are separate Deployments from your API. Scale workers independently based on queue depth metrics.</div>
+    </div>
+  </div>
+
+  <div class="design-step">
+    <div class="ds-num">08</div>
+    <div class="ds-body">
+      <div class="ds-title">Set Up Monitoring Before Launch</div>
+      <div class="ds-desc">Track: queue depth (waiting jobs), processing rate (jobs/minute), error rate (failed %), worker health (uptime). Set alerts: if queue depth > 1000 → scale workers. If error rate > 5% → investigate. If any worker is down → alert immediately. Use BullBoard for a real-time dashboard. Emit metrics to Prometheus/Grafana for historical analysis.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 23 QUEUE ARCHITECTURE ═══ -->
+<section id="queue-design" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-o">23</span><span class="lv lv-s">Senior</span></div>
+  <h2 class="sec-title">QUEUE <span class="o">ARCHITECTURE</span> — Production Setup</h2>
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">Production Queue Architecture — Full Setup</div></div>
+    <div class="code-pre">
+<span class="cm">// ─── queues/index.ts — All queues exported centrally ─────────────</span>
+<span class="kw">import</span> { Queue } <span class="kw">from</span> <span class="str">'bullmq'</span>;
+<span class="kw">import</span> { redisConfig } <span class="kw">from</span> <span class="str">'../config/redis'</span>;
+
+<span class="kw">const</span> DEFAULT_OPTS = {
+  removeOnComplete: { count: <span class="num">1000</span>, age: <span class="num">86400</span> },
+  removeOnFail:     { count: <span class="num">5000</span>, age: <span class="num">604800</span> },
+};
+
+<span class="cm">// Separate queue per domain — scale and monitor independently</span>
+<span class="kw">export const</span> emailQueue     = <span class="kw">new</span> <span class="fn">Queue</span>(<span class="str">'email'</span>,      { connection: redisConfig, defaultJobOptions: { ...DEFAULT_OPTS, attempts: <span class="num">5</span>,  backoff: { type: <span class="str">'exponential'</span>, delay: <span class="num">60_000</span>   } } });
+<span class="kw">export const</span> mediaQueue     = <span class="kw">new</span> <span class="fn">Queue</span>(<span class="str">'media'</span>,      { connection: redisConfig, defaultJobOptions: { ...DEFAULT_OPTS, attempts: <span class="num">3</span>,  backoff: { type: <span class="str">'fixed'</span>,       delay: <span class="num">30_000</span>   } } });
+<span class="kw">export const</span> notifQueue     = <span class="kw">new</span> <span class="fn">Queue</span>(<span class="str">'notification'</span>,{ connection: redisConfig, defaultJobOptions: { ...DEFAULT_OPTS, attempts: <span class="num">2</span>,  backoff: { type: <span class="str">'fixed'</span>,       delay: <span class="num">5_000</span>    } } });
+<span class="kw">export const</span> reportQueue    = <span class="kw">new</span> <span class="fn">Queue</span>(<span class="str">'report'</span>,     { connection: redisConfig, defaultJobOptions: { ...DEFAULT_OPTS, attempts: <span class="num">3</span>,  backoff: { type: <span class="str">'exponential'</span>, delay: <span class="num">120_000</span>  } } });
+<span class="kw">export const</span> deletionQueue  = <span class="kw">new</span> <span class="fn">Queue</span>(<span class="str">'deletion'</span>,   { connection: redisConfig, defaultJobOptions: { ...DEFAULT_OPTS, attempts: <span class="num">5</span>,  backoff: { type: <span class="str">'exponential'</span>, delay: <span class="num">30_000</span>   } } });
+<span class="kw">export const</span> schedulerQueue = <span class="kw">new</span> <span class="fn">Queue</span>(<span class="str">'scheduler'</span>,  { connection: redisConfig });
+
+<span class="cm">// ─── workers/index.ts — Start all workers in the worker process ──</span>
+<span class="kw">import</span> { emailWorker     } <span class="kw">from</span> <span class="str">'./email.worker'</span>;
+<span class="kw">import</span> { mediaWorker     } <span class="kw">from</span> <span class="str">'./media.worker'</span>;
+<span class="kw">import</span> { notifWorker     } <span class="kw">from</span> <span class="str">'./notification.worker'</span>;
+<span class="kw">import</span> { reportWorker    } <span class="kw">from</span> <span class="str">'./report.worker'</span>;
+<span class="kw">import</span> { deletionWorker  } <span class="kw">from</span> <span class="str">'./deletion.worker'</span>;
+<span class="kw">import</span> { schedulerWorker } <span class="kw">from</span> <span class="str">'./scheduler.worker'</span>;
+
+console.<span class="fn">log</span>(<span class="str">'🚀 Workers started'</span>);
+
+<span class="cm">// Graceful shutdown — finish current jobs before stopping</span>
+<span class="kw">async function</span> <span class="fn">shutdown</span>() {
+  console.<span class="fn">log</span>(<span class="str">'Shutting down workers...'</span>);
+  <span class="kw">await</span> Promise.<span class="fn">all</span>([
+    emailWorker.<span class="fn">close</span>(),
+    mediaWorker.<span class="fn">close</span>(),
+    notifWorker.<span class="fn">close</span>(),
+    reportWorker.<span class="fn">close</span>(),
+    deletionWorker.<span class="fn">close</span>(),
+    schedulerWorker.<span class="fn">close</span>(),
+  ]);
+  process.<span class="fn">exit</span>(<span class="num">0</span>);
+}
+
+process.on(<span class="str">'SIGTERM'</span>, shutdown);
+process.on(<span class="str">'SIGINT'</span>,  shutdown);
+
+<span class="cm">// ─── package.json scripts ─────────────────────────────────────────</span>
+<span class="gg">"scripts": {</span>
+<span class="gg">  "start:api":     "node dist/server.js",      </span><span class="cm">// API process</span>
+<span class="gg">  "start:workers": "node dist/workers/index.js" </span><span class="cm">// Worker process — separate!</span>
+<span class="gg">}</span>
+
+<span class="cm">// ─── docker-compose.yml — API and workers as separate services ────</span>
+<span class="gg">services:</span>
+<span class="gg">  api:</span>
+<span class="gg">    image: yourapp:latest</span>
+<span class="gg">    command: npm run start:api</span>
+<span class="gg">    replicas: 3</span>
+
+<span class="gg">  workers:</span>
+<span class="gg">    image: yourapp:latest</span>
+<span class="gg">    command: npm run start:workers</span>
+<span class="gg">    replicas: 2  </span><span class="cm">  # scale independently of API</span>
+
+<span class="gg">  redis:</span>
+<span class="gg">    image: redis:7-alpine</span>
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 24 SCALING ═══ -->
+<section id="scaling-workers" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-g">24</span><span class="lv lv-s">Senior</span></div>
+  <h2 class="sec-title">SCALING <span class="g">WORKERS</span></h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Scaling Dimension</th><th>How</th><th>When</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Concurrency (per worker)</strong></td><td>Set <code>concurrency: N</code> in Worker options. One worker processes N jobs simultaneously using async/await.</td><td>When jobs are I/O bound (email, API calls). Set to 5-20 for async tasks.</td></tr>
+        <tr><td><strong>Horizontal (more instances)</strong></td><td>Run more worker processes (more Docker containers / Kubernetes pods). All connect to same Redis queue.</td><td>When queue depth is growing faster than workers can process. Add more pods.</td></tr>
+        <tr><td><strong>Priority Queues</strong></td><td>Use BullMQ job priority (1=highest). Email verification (priority 1) processed before welcome email (priority 5).</td><td>When some tasks are more urgent than others. Never let analytics block signups.</td></tr>
+        <tr><td><strong>Dedicated Workers</strong></td><td>Run separate worker processes per queue. Media workers have 2 concurrency (CPU bound). Email workers have 20 (IO bound).</td><td>When task types have different resource profiles (CPU vs IO).</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout co-g">
+    <div class="callout-lbl">💡 Stateless Workers = Easy Scaling</div>
+    <div class="callout-txt">Workers must be completely stateless — all state lives in Redis and PostgreSQL. Any worker instance must be able to handle any task. This means: no in-memory state, no local file dependencies not also in S3, no worker-specific configuration. If your workers are stateless, scaling is just <code>kubectl scale deployment workers --replicas=10</code>.</div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 25 MONITORING ═══ -->
+<section id="monitoring" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-v">25</span><span class="lv lv-s">Senior</span></div>
+  <h2 class="sec-title">MONITORING <span class="v">&amp; ALERTING</span></h2>
+  <div class="code">
+    <div class="code-bar"><div class="dots"><span></span><span></span><span></span></div><div class="code-title">Monitoring Setup — BullBoard + Metrics</div></div>
+    <div class="code-pre">
+<span class="cm">// ─── BullBoard: Real-time queue dashboard ─────────────────────────</span>
+<span class="cm">// npm install @bull-board/express @bull-board/api</span>
+<span class="kw">import</span> { createBullBoard }    <span class="kw">from</span> <span class="str">'@bull-board/api'</span>;
+<span class="kw">import</span> { BullMQAdapter }      <span class="kw">from</span> <span class="str">'@bull-board/api/bullMQAdapter'</span>;
+<span class="kw">import</span> { ExpressAdapter }     <span class="kw">from</span> <span class="str">'@bull-board/express'</span>;
+
+<span class="kw">const</span> serverAdapter = <span class="kw">new</span> <span class="fn">ExpressAdapter</span>();
+serverAdapter.<span class="fn">setBasePath</span>(<span class="str">'/admin/queues'</span>);
+
+<span class="fn">createBullBoard</span>({
+  queues: [
+    <span class="kw">new</span> <span class="fn">BullMQAdapter</span>(emailQueue),
+    <span class="kw">new</span> <span class="fn">BullMQAdapter</span>(mediaQueue),
+    <span class="kw">new</span> <span class="fn">BullMQAdapter</span>(notifQueue),
+    <span class="kw">new</span> <span class="fn">BullMQAdapter</span>(reportQueue),
+  ],
+  serverAdapter,
+});
+
+app.<span class="fn">use</span>(<span class="str">'/admin/queues'</span>, adminAuthMiddleware, serverAdapter.<span class="fn">getRouter</span>());
+<span class="cm">// Visit /admin/queues → see all queues, jobs, retry manually, clear queues</span>
+
+<span class="cm">// ─── Custom Metrics ────────────────────────────────────────────────</span>
+<span class="cm">// Track key metrics and expose to Prometheus/Grafana</span>
+<span class="kw">async function</span> <span class="fn">collectQueueMetrics</span>() {
+  <span class="kw">for</span> (<span class="kw">const</span> [name, queue] <span class="kw">of</span> Object.<span class="fn">entries</span>(queues)) {
+    <span class="kw">const</span> counts = <span class="kw">await</span> queue.<span class="fn">getJobCounts</span>();
+
+    <span class="cm">// Emit to your metrics system</span>
+    metrics.<span class="fn">gauge</span>(<span class="str">`queue.waiting`</span>,   counts.waiting,   { queue: name });
+    metrics.<span class="fn">gauge</span>(<span class="str">`queue.active`</span>,    counts.active,    { queue: name });
+    metrics.<span class="fn">gauge</span>(<span class="str">`queue.completed`</span>, counts.completed, { queue: name });
+    metrics.<span class="fn">gauge</span>(<span class="str">`queue.failed`</span>,    counts.failed,    { queue: name });
+
+    <span class="cm">// Alert: queue depth too high → workers need scaling</span>
+    <span class="kw">if</span> (counts.waiting > <span class="num">1000</span>) {
+      <span class="kw">await</span> <span class="fn">alert</span>(<span class="str">`Queue '${name}' depth: ${counts.waiting} — consider scaling workers`</span>);
+    }
+
+    <span class="cm">// Alert: too many failures → investigate immediately</span>
+    <span class="kw">if</span> (counts.failed > <span class="num">100</span>) {
+      <span class="kw">await</span> <span class="fn">alert</span>(<span class="str">`Queue '${name}' has ${counts.failed} failed jobs — check DLQ`</span>);
+    }
+  }
+}
+
+<span class="cm">// Run metrics collection every 30 seconds</span>
+<span class="fn">setInterval</span>(collectQueueMetrics, <span class="num">30_000</span>);
+
+<span class="cm">// ─── Worker health monitoring ─────────────────────────────────────</span>
+emailWorker.on(<span class="str">'error'</span>, (err) => {
+  console.<span class="fn">error</span>(<span class="str">'Worker error:'</span>, err);
+  metrics.<span class="fn">increment</span>(<span class="str">'worker.error'</span>, { queue: <span class="str">'email'</span> });
+});
+
+emailWorker.on(<span class="str">'stalled'</span>, (jobId) => {
+  console.<span class="fn">warn</span>(<span class="str">`Job ${jobId} stalled — worker may have crashed`</span>);
+  metrics.<span class="fn">increment</span>(<span class="str">'worker.stalled'</span>, { queue: <span class="str">'email'</span> });
+});
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 26 BEST PRACTICES ═══ -->
+<section id="best-practices" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-o">26</span><span class="lv lv-s">Senior</span></div>
+  <h2 class="sec-title">BEST <span class="o">PRACTICES</span></h2>
+  <div class="cards">
+    <div class="card" style="border-left:3px solid var(--violet)">
+      <div class="card-ico">📦</div>
+      <div class="card-title">Keep Tasks Small & Focused</div>
+      <div class="card-body">One task = one unit of work. Don't send email AND process image AND update DB in one task. If one thing fails, the whole task retries — wasting work already done. Split into separate tasks, use chains for dependencies.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--orange)">
+      <div class="card-ico">⚡</div>
+      <div class="card-title">Avoid Long-Running Tasks</div>
+      <div class="card-body">Tasks that take more than a few minutes are hard to monitor, hard to retry safely, and create visibility timeout issues. Break them into smaller chunks using chain tasks or batch tasks.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--blue)">
+      <div class="card-ico">🔁</div>
+      <div class="card-title">Design for Idempotency</div>
+      <div class="card-body">Every task WILL be retried. Design every handler to be safely re-executable. Idempotency keys, ON CONFLICT DO NOTHING, status checks. This is non-negotiable in production.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--green)">
+      <div class="card-ico">📋</div>
+      <div class="card-title">Structured Logging</div>
+      <div class="card-body">Log at start and end of every task. Log every failure with full context (jobId, taskData, error, attempt number). Use JSON logs for searchability. Without good logs, debugging background failures is nearly impossible.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--red)">
+      <div class="card-ico">🚨</div>
+      <div class="card-title">Never Swallow Errors</div>
+      <div class="card-body">Always re-throw errors in task handlers. Swallowing errors prevents retries — the queue thinks the task succeeded. If an error happens, throw it. Let the queue handle retrying.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--teal)">
+      <div class="card-ico">🔒</div>
+      <div class="card-title">Distributed Lock for Crons</div>
+      <div class="card-body">If running multiple worker instances, use Redis SET NX at the start of every cron handler. Without it, all worker instances will execute the cron simultaneously — sending duplicate reports to thousands of users.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--amber)">
+      <div class="card-ico">📊</div>
+      <div class="card-title">Monitor Queue Depth</div>
+      <div class="card-body">Set alerts when queue depth exceeds a threshold. Growing queue depth = workers can't keep up = tasks getting delayed. Respond by scaling workers horizontally. Never let the queue grow unbounded.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--pink)">
+      <div class="card-ico">🔄</div>
+      <div class="card-title">Graceful Shutdown</div>
+      <div class="card-body">On SIGTERM, tell workers to stop accepting new jobs but finish current ones. Never kill a worker process mid-task — you'll have partially-completed tasks and inconsistent data. BullMQ's worker.close() handles this.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="d">
+
+<!-- ═══ 27 CHECKLIST ═══ -->
+<section id="checklist" class="section">
+  <div class="sec-meta"><span class="sec-badge sb-g">27</span><span class="lv lv-s">Senior</span></div>
+  <h2 class="sec-title">PRODUCTION <span class="g">CHECKLIST</span></h2>
+  <div class="prod-cl">
+    <div class="prod-cl-hdr">// Architecture</div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Separate queues per domain</strong> — email, media, notifications, reports, deletions, scheduler</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Workers run in a separate process</strong> from the API server (separate npm script / Docker service)</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Workers are stateless</strong> — any instance can handle any task — no local state or local file dependencies</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Graceful shutdown</strong> implemented — SIGTERM triggers worker.close(), finishes current jobs before exit</div></div>
+  </div>
+  <div class="prod-cl">
+    <div class="prod-cl-hdr">// Reliability</div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Every task handler is idempotent</strong> — safe to execute multiple times with same result</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Retry strategy configured per queue</strong> with appropriate exponential backoff delays</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Max attempts set</strong> — no infinite retry loops. Failed jobs eventually land in DLQ</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Dead Letter Queue handled</strong> — failed jobs stored in DB, alerts sent, manual retry possible</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Visibility timeout set correctly</strong> per queue (2-3x max expected job duration)</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Errors always re-thrown</strong> in handlers — never swallowed. Failed tasks must trigger retries.</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>DB transactions used</strong> for multi-step DB operations — rollback on failure keeps state clean for retry</div></div>
+  </div>
+  <div class="prod-cl">
+    <div class="prod-cl-hdr">// Scheduling</div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Cron jobs protected by distributed lock</strong> — Redis SET NX prevents duplicate execution across worker instances</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Cron schedules tested</strong> — verify expressions at crontab.guru before deploying</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Cron tasks use UTC timezone</strong> — never local time (servers may be in different regions)</div></div>
+  </div>
+  <div class="prod-cl">
+    <div class="prod-cl-hdr">// Monitoring</div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>BullBoard dashboard</strong> deployed at /admin/queues (protected by admin auth) for real-time visibility</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Queue depth metrics</strong> exported to Prometheus/Grafana — alert if waiting jobs exceed threshold</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Error rate alerts</strong> — alert if failed job count exceeds acceptable threshold</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Worker health monitored</strong> — alert if any worker instance is down</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Structured JSON logging</strong> in all handlers — start, complete, fail events all logged with jobId and context</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Job progress tracked</strong> for long-running tasks — use job.updateProgress() for visibility</div></div>
+  </div>
+  <div class="prod-cl">
+    <div class="prod-cl-hdr">// Scaling</div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Concurrency configured per worker</strong> — I/O bound tasks (emails): high concurrency (10-20). CPU bound (image): low (2-4)</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Horizontal scaling tested</strong> — run multiple worker instances against same Redis, verify no duplicate processing</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Redis memory limit set</strong> with appropriate eviction policy — queue data must not be evicted before processing</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Redis persistence configured</strong> (AOF or RDB) — queued jobs must survive Redis restarts</div></div>
+    <div class="prod-cl-item"><div class="pcl-ico">☐</div><div class="pcl-txt"><strong>Rate limiting per queue</strong> — if queue interacts with external services, respect their rate limits</div></div>
+  </div>
+</section>
+
+</div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// Active sidebar link on scroll
+const sections = document.querySelectorAll('.section');
+const links = document.querySelectorAll('.sb-a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.sb-a[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.15 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
