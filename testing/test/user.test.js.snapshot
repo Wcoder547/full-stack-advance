@@ -1,0 +1,15 @@
+exports[`user feature > fetch data from the server 1`] = `
+{
+  "id": 1,
+  "name": "John Doe",
+  "roles": [
+    "admin",
+    "user"
+  ],
+  "lastLogin": "2024-01-01T10:00:00.000Z",
+  "prefrences": {
+    "theme": "dark",
+    "notifications": true
+  }
+}
+`;
